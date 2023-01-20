@@ -7,7 +7,7 @@ class Read extends StatefulWidget {
 }
 
 class _ReadState extends State<Read> {
-  final database = FirebaseDatabase.instance.reference();
+  final database = FirebaseDatabase.instance.ref();
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +25,10 @@ class _ReadState extends State<Read> {
           children: <Widget>[
             Card(
               color: Colors.grey,
-              child: Container(
+              child: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.1,
                 width: MediaQuery.of(context).size.width* 0.3,
-                child: Center(
+                child: const Center(
                   child: Text("Ops nada por aqui"),
                 ),
               ),

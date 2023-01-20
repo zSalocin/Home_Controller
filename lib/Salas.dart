@@ -30,12 +30,12 @@ class _SalaState extends State<Salas> {
                 if(snapshot.hasData){
                   Map<dynamic, dynamic> data = (snapshot.data! as dynamic).snapshot.value;
                   data.forEach((index, data) => item.add({'key': index,...data}));
-                  return new ListView.builder(
+                  return ListView.builder(
                     itemCount: item.length,
                     itemBuilder: (BuildContext context, int index) => buildCard(context, Sala.fromRTDB(item[index])),
                   );
                 }else{
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
               }
           )
@@ -45,33 +45,33 @@ class _SalaState extends State<Salas> {
 
   Widget buildCard(BuildContext context, Sala sala, ) {
     final blocA101 = _database.child('Blocos/${widget.text}/Salas/${sala.name}');
-    return new Container(
-      child: Card(
-        color: Colors.grey,
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.1,
-          width: MediaQuery.of(context).size.width,
-          child: Row(
-            children: <Widget>[
-              SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-              ElevatedButton(onPressed: (){}, child: Text('${sala.name}'),),
-              SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-              IconButton(onPressed: () async{
-                if(sala.luz == true)
-                  await blocA101.update({'luz':false});
-                else
-                  await blocA101.update({'luz':true});
-              }, icon: sala.luz ? Icon(Icons.lightbulb) : Icon(Icons.lightbulb_outline)),
-              SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-              IconButton(onPressed: () async{
-                if(sala.air == true)
-                  await blocA101.update({'air':false});
-                else
-                  await blocA101.update({'air':true});
-              }, icon: sala.air ? Icon(Icons.ac_unit) : Icon(Icons.block)),
-              SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ],
-          ),
+    return Card(
+      color: Colors.grey,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.1,
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          children: <Widget>[
+            SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+            ElevatedButton(onPressed: (){}, child: Text(sala.name),),
+            SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+            IconButton(onPressed: () async{
+              if(sala.luz == true) {
+                await blocA101.update({'luz':false});
+              } else {
+                await blocA101.update({'luz':true});
+              }
+            }, icon: sala.luz ? const Icon(Icons.lightbulb) : const Icon(Icons.lightbulb_outline)),
+            SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+            IconButton(onPressed: () async{
+              if(sala.air == true) {
+                await blocA101.update({'air':false});
+              } else {
+                await blocA101.update({'air':true});
+              }
+            }, icon: sala.air ? const Icon(Icons.ac_unit) : const Icon(Icons.block)),
+            SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+          ],
         ),
       ),
     );
