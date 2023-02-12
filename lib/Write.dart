@@ -1,10 +1,8 @@
-
-
 import 'package:flutter/material.dart';
 
 import 'package:firebase_database/firebase_database.dart';
 
-import 'Firebase_Methods.dart';
+import 'firebase_call.dart';
 
 class Write extends StatefulWidget {
   const Write({super.key});
@@ -49,9 +47,12 @@ class WriteState extends State<Write> {
                     SizedBox(
                       width: espaco,
                     ),
-                     ElevatedButton(onPressed: () async {
-                       blockCreate(context);
-                    }, child: const Text('create a block'),)
+                    ElevatedButton(
+                      onPressed: () async {
+                        blockCreate(context);
+                      },
+                      child: const Text('create a block'),
+                    )
                   ],
                 ),
               ),
@@ -100,7 +101,7 @@ class WriteState extends State<Write> {
                               border: OutlineInputBorder(),
                               labelText: 'Sala name',
                             ),
-                            onSubmitted: (String sala){
+                            onSubmitted: (String sala) {
                               final nextSala = <String, dynamic>{
                                 'name': sala,
                                 'luz': false,
@@ -112,7 +113,7 @@ class WriteState extends State<Write> {
                                   .then((_) => print('sala has saved'))
                                   .catchError(
                                       (error) => print('error here $error'));
-                              },
+                            },
                           ),
                         ),
                       ),
@@ -147,14 +148,14 @@ class WriteState extends State<Write> {
                           color: Colors.red,
                           size: 12.0,
                           semanticLabel:
-                          'Text to announce in accessibility modes',
+                              'Text to announce in accessibility modes',
                         ),
                         //TODO colocar scroll roll pra selecionar blocos pre criados
                       ),
                       SizedBox(
                         width: espaco,
                       ),
-                     const Text('Defina a sala'),
+                      const Text('Defina a sala'),
                       SizedBox(
                         width: espaco,
                       ),

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'Firebase_Methods.dart';
+import 'package:tcc_2023/config_page.dart';
+import 'firebase_call.dart';
 import 'firebase_options.dart';
-import 'package:tcc_2023/Command.dart';
-import 'package:tcc_2023/Read.dart';
-import 'package:tcc_2023/Write.dart';
+import 'package:tcc_2023/command.dart';
 
 Future<void> main() async {
   await Firebase.initializeApp(
@@ -33,7 +32,9 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasData) {
             return const MyHomePage(title: 'Home Page');
           } else {
-            return const Center(child: CircularProgressIndicator(),);
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
         },
       ),
@@ -86,7 +87,7 @@ class MyHomePage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Write(),
+                            builder: (context) => CONFIG(),
                           ),
                         );
                       },

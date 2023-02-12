@@ -27,7 +27,7 @@ class _ReadState extends State<Read> {
               color: Colors.grey,
               child: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.1,
-                width: MediaQuery.of(context).size.width* 0.3,
+                width: MediaQuery.of(context).size.width * 0.3,
                 child: const Center(
                   child: Text("Ops nada por aqui"),
                 ),
