@@ -1,5 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 
+//TODO adicionar try catch aos metodos para evitar error
+
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
@@ -32,10 +34,9 @@ class FirebaseService {
   Future<void> createBlock(String blockName) async {
     final block = <String, dynamic>{
       'name': blockName,
-      'luz': false,
     };
     try {
-      await _database.ref().child('/Blocos/$blockName').update(block);
+      await _database.ref().child('/Blocos/Bloco $blockName').update(block);
     } catch (e) {
       print('Error updating block: $e');
     }
@@ -53,10 +54,11 @@ class FirebaseService {
   Future<void> createRoom(String block, String roomName) async {
     final room = <String, dynamic>{
       'name': roomName,
-      'luz': false,
-      'air': false,
     };
-    await _database.ref().child('/Blocos/$block/rooms/$roomName').update(room);
+    await _database
+        .ref()
+        .child('/Blocos/$block/rooms/Sala $roomName')
+        .update(room);
   }
 
   Future<void> updateRoom(
@@ -79,7 +81,7 @@ class FirebaseService {
     };
     await _database
         .ref()
-        .child('/Blocos/$blockName/$elementName')
+        .child('/Blocos/$blockName/Elements/Element $elementName')
         .update(element);
   }
 
