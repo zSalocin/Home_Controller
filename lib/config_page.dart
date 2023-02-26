@@ -54,13 +54,35 @@ class CONFIGState extends State<CONFIG> {
                 Column(
                   children: [
                     Container(
-                      //TODO imagem do esp e config do esp
-                      height: MediaQuery.of(context).size.height -
-                          AppBar().preferredSize.height -
-                          MediaQuery.of(context).padding.top,
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      color: Colors.pink,
-                    ),
+                        color: Colors.blue,
+                        alignment: Alignment.centerRight,
+                        height: MediaQuery.of(context).size.height -
+                            AppBar().preferredSize.height -
+                            MediaQuery.of(context).padding.top,
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: StreamBuilder(
+                            stream: database
+                                .child('Blocos/$selectedBlock/Elements')
+                                .onValue,
+                            builder: (context, snapshot) {
+                              List item = [];
+                              if (snapshot.hasData) {
+                                Map<String, dynamic> data =
+                                    (snapshot.data! as dynamic).snapshot.value;
+                                data.forEach((index, data) =>
+                                    item.add({'key': index, ...data}));
+                                return ListView.builder(
+                                  itemCount: item.length,
+                                  itemBuilder: (BuildContext context,
+                                          int index) =>
+                                      buildCard(
+                                          context, Obj.fromRTDB(item[index])),
+                                );
+                              } else {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                            })),
                   ],
                 ),
                 Column(
@@ -128,36 +150,14 @@ class CONFIGState extends State<CONFIG> {
                       ),
                     ),
                     Container(
-                        color: Colors.blue,
-                        alignment: Alignment.centerRight,
-                        height: (MediaQuery.of(context).size.height -
-                                AppBar().preferredSize.height -
-                                MediaQuery.of(context).padding.top) *
-                            0.9,
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        child: StreamBuilder(
-                            stream: database
-                                .child('Blocos/$selectedBlock/Elements')
-                                .onValue,
-                            builder: (context, snapshot) {
-                              List item = [];
-                              if (snapshot.hasData) {
-                                Map<String, dynamic> data =
-                                    (snapshot.data! as dynamic).snapshot.value;
-                                data.forEach((index, data) =>
-                                    item.add({'key': index, ...data}));
-                                return ListView.builder(
-                                  itemCount: item.length,
-                                  itemBuilder: (BuildContext context,
-                                          int index) =>
-                                      buildCard(
-                                          context, Obj.fromRTDB(item[index])),
-                                );
-                              } else {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            })),
+                      //TODO imagem do esp e config do esp
+                      height: (MediaQuery.of(context).size.height -
+                              AppBar().preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.9,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      color: Colors.pink,
+                    ),
                   ],
                 ),
               ]);

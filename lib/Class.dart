@@ -1,26 +1,26 @@
-class Bloco {
+class Block {
   final String name;
   final bool luz;
 
-  Bloco({required this.name, required this.luz});
+  Block({required this.name, required this.luz});
 
-  factory Bloco.fromRTDB(Map<dynamic, dynamic> data) {
-    return Bloco(
+  factory Block.fromRTDB(Map<dynamic, dynamic> data) {
+    return Block(
       name: data['name'] ?? 'Bloco misterioso',
       luz: data['luz'] ?? false,
     );
   }
 }
 
-class Sala {
+class Room {
   final String name;
   final bool luz;
   final bool air;
 
-  Sala({required this.name, required this.luz, required this.air});
+  Room({required this.name, required this.luz, required this.air});
 
-  factory Sala.fromRTDB(Map<dynamic, dynamic> data) {
-    return Sala(
+  factory Room.fromRTDB(Map<dynamic, dynamic> data) {
+    return Room(
       name: data['name'] ?? 'sala secreta',
       luz: data['luz'] ?? false,
       air: data['air'] ?? false,

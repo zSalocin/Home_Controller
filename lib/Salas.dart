@@ -34,7 +34,7 @@ class _SalaState extends State<Salas> {
                   return ListView.builder(
                     itemCount: item.length,
                     itemBuilder: (BuildContext context, int index) =>
-                        buildCard(context, Sala.fromRTDB(item[index])),
+                        buildCard(context, Room.fromRTDB(item[index])),
                   );
                 } else {
                   return const CircularProgressIndicator();
@@ -45,7 +45,7 @@ class _SalaState extends State<Salas> {
 
   Widget buildCard(
     BuildContext context,
-    Sala sala,
+    Room sala,
   ) {
     final blocA101 =
         _database.child('Blocos/${widget.text}/Salas/${sala.name}');

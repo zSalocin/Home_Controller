@@ -160,16 +160,19 @@ List<String> itemStyle = [
   "Current Sensor"
 ];
 Future<void> elementCreate(BuildContext context) async {
+  //TODO consertar error de quando muda o bloco crasha a aplicação pq a lista do dropbutton nao pode ser alterada.
   final FirebaseService firebaseService = FirebaseService();
   final blocks = await firebaseService.getBlocks();
   final formKey = GlobalKey<FormState>();
   String selectedBlock = blocks.isNotEmpty ? blocks[0] : "";
-  final rooms = await firebaseService.getRooms(selectedBlock);
+  final roomcheck = await firebaseService.getRooms(selectedBlock);
+  List<String> rooms = [];
   String selectedRoom = rooms.isNotEmpty ? blocks[0] : "";
   String selectedElement = "";
   String elementName = "";
   String selectedPin = "";
   bool isDialogOpen = false;
+  bool isUpdatingRooms = true;
 
   if (!isDialogOpen) {
     isDialogOpen = true;
@@ -182,7 +185,7 @@ Future<void> elementCreate(BuildContext context) async {
             return wdialogBox(context, "Notification",
                 "No Blocks were found, please create a block first");
           }
-          if (!rooms.isNotEmpty) {
+          if (!roomcheck.isNotEmpty) {
             return wdialogBox(context, "Notification",
                 "No Rooms were found, please create a room first");
           }
@@ -256,7 +259,7 @@ Future<void> elementCreate(BuildContext context) async {
                       width: MediaQuery.of(context).size.width * 0.01,
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    //---------------------Block
+//---------------------Block
                     DropdownButtonFormField(
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
@@ -269,7 +272,20 @@ Future<void> elementCreate(BuildContext context) async {
                           child: Text(value),
                         );
                       }).toList(),
-                      onChanged: (value) => selectedBlock = value!,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedBlock = value!;
+                          selectedRoom = "";
+                          rooms = [];
+                          isUpdatingRooms = true;
+                        });
+                        firebaseService.getRooms(selectedBlock).then((value) {
+                          setState(() {
+                            rooms = value;
+                            isUpdatingRooms = false;
+                          });
+                        });
+                      },
                       validator: (value) {
                         if (value == null) {
                           return 'Please select a block';
@@ -281,26 +297,36 @@ Future<void> elementCreate(BuildContext context) async {
                       width: MediaQuery.of(context).size.width * 0.01,
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    //---------------------Room
-                    DropdownButtonFormField(
+//---------------------Room
+                    DropdownButtonFormField<String>(
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Room name',
                       ),
-                      items:
-                          rooms.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (value) => selectedRoom = value!,
+                      items: isUpdatingRooms
+                          ? []
+                          : rooms.map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                      onChanged: isUpdatingRooms
+                          ? null
+                          : (value) => selectedRoom = value!,
                       validator: (value) {
                         if (value == null) {
                           return 'Please select a Room';
                         }
                         return null;
                       },
+                      onTap: () {
+                        if (isUpdatingRooms) {
+                          return null;
+                        }
+                      },
+                      disabledHint: Text('Loading rooms...'),
+                      dropdownColor: isUpdatingRooms ? Colors.grey[300] : null,
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.01,

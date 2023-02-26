@@ -2,6 +2,10 @@ import 'package:firebase_database/firebase_database.dart';
 
 //TODO adicionar try catch aos metodos para evitar error
 
+//TODO adicionar um verificador na criação para checar se uma sala, bloco ou elemento de mesmo nome existe
+
+//TODO adicionar um verificador na criação de elementos para impedir pin repetidos dentro do mesmo bloco
+
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
@@ -33,7 +37,7 @@ class FirebaseService {
 
   Future<void> createBlock(String blockName) async {
     final block = <String, dynamic>{
-      'name': blockName,
+      'name': 'Bloco $blockName',
     };
     try {
       await _database.ref().child('/Blocos/Bloco $blockName').update(block);
@@ -53,7 +57,7 @@ class FirebaseService {
 
   Future<void> createRoom(String block, String roomName) async {
     final room = <String, dynamic>{
-      'name': roomName,
+      'name': 'Sala $roomName',
     };
     await _database
         .ref()
