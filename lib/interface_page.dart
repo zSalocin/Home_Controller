@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'class.dart';
 import 'FireBase_Services.dart';
+import 'Interface_RoomPage.dart';
 
 class INTERFACE extends StatefulWidget {
   const INTERFACE({super.key});
@@ -49,29 +50,17 @@ class INTERFACEState extends State<INTERFACE> {
     return Card(
       child: ExpansionTile(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(bloco.name),
             Row(
-              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    // Do something when add button is pressed
-                  },
+                  onPressed: () {},
+                  icon: Icon(Icons.lightbulb_circle_outlined),
                 ),
                 IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    // Do something when edit button is pressed
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    // Do something when delete button is pressed
-                  },
+                  onPressed: () {},
+                  icon: Icon(Icons.ac_unit_outlined),
                 ),
               ],
             ),
@@ -91,29 +80,52 @@ class INTERFACEState extends State<INTERFACE> {
                       bottom: BorderSide(color: Colors.grey.shade300),
                     ),
                   ),
-                  child: ListView.builder(
+                  child: ListView.separated(
                     shrinkWrap: true,
-                    physics: ClampingScrollPhysics(),
+                    physics: const ClampingScrollPhysics(),
                     itemCount: rooms.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.001,
+                      );
+                    },
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
-                        margin: EdgeInsets.all(0),
-                        color: Colors.transparent,
-                        child: ExpansionTile(
-                          title: Text(rooms[index]),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
+                        color: Colors.orange,
+                        child: Padding(
+                          padding: const EdgeInsets.all(14.0),
+                          child: Row(
                             children: <Widget>[
+                              Text(
+                                rooms[index],
+                                style: const TextStyle(
+                                  fontSize: 18.0,
+                                ),
+                              ),
                               IconButton(
-                                icon: Icon(Icons.edit),
                                 onPressed: () {
                                   // Do something when edit button is pressed
                                 },
+                                icon:
+                                    const Icon(Icons.lightbulb_circle_outlined),
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete),
                                 onPressed: () {
                                   // Do something when delete button is pressed
+                                },
+                                icon: const Icon(Icons.ac_unit_outlined),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                icon: const Icon(Icons.arrow_forward),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          RoomPage(roomName: rooms[index]),
+                                    ),
+                                  );
                                 },
                               ),
                             ],
@@ -134,7 +146,7 @@ class INTERFACEState extends State<INTERFACE> {
               }
             },
           ),
-          Card(
+          const Card(
             margin: EdgeInsets.all(0),
             color: Colors.transparent,
             child: ListTile(
@@ -158,3 +170,5 @@ class INTERFACEState extends State<INTERFACE> {
 //TODO adicionar botoes para acender ou apagar todos elementos dentro de um bloco e sala
 
 //TODO adicionar contador para salas e elementos no bloco
+
+//TODO adicionar um check para verificar se a algum elemento ativo no bloco e alterar icono conforme
