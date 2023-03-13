@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'class.dart';
 import 'FireBase_Services.dart';
-import 'Interface_RoomPage.dart';
+import 'interface_roompage.dart';
 
 class INTERFACE extends StatefulWidget {
   const INTERFACE({super.key});
@@ -122,8 +122,9 @@ class INTERFACEState extends State<INTERFACE> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          RoomPage(roomName: rooms[index]),
+                                      builder: (context) => RoomPage(
+                                          roomName: rooms[index],
+                                          blocoName: bloco.name),
                                     ),
                                   );
                                 },
