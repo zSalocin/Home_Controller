@@ -78,7 +78,7 @@ class FirebaseService {
       String elementName, String type, int pin) async {
     final element = <String, dynamic>{
       'room': roomName,
-      'name': elementName,
+      'name': 'Element $elementName',
       'type': type,
       'stats': false,
       'pin': pin,

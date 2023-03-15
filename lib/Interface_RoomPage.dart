@@ -25,27 +25,64 @@ class _RoomPageState extends State<RoomPage> {
           color: Colors.blue,
           child: StreamBuilder(
               stream: database
-                  .child(
-                      'Blocos/${widget.blocoName}/rooms/Sala ${widget.roomName}')
+                  .child('/Blocos/${widget.blocoName}/Elements/')
                   .onValue,
               builder: (context, snapshot) {
                 List item = [];
                 if (snapshot.hasData) {
-                  Map<dynamic, dynamic> data =
+                  Map<String, dynamic> data =
                       (snapshot.data! as dynamic).snapshot.value;
                   data.forEach(
                       (index, data) => item.add({'key': index, ...data}));
+                  item = item
+                      .where((element) => element['room'] == widget.roomName)
+                      .toList();
                   return ListView.builder(
                     itemCount: item.length,
                     itemBuilder: (BuildContext context, int index) =>
                         buildCard(context, Obj.fromRTDB(item[index])),
                   );
                 } else {
-                  return const CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 }
               })),
     );
   }
 
-  buildCard(BuildContext context, Obj element) {}
+  buildCard(BuildContext context, Obj element) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    element.name,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  Text(
+                    element.type,
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                element.stats
+                    ? Icons.power_settings_new
+                    : Icons.power_settings_new_outlined,
+              ),
+              onPressed: () {
+                //TODO fazer a parte do firebase
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

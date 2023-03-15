@@ -322,10 +322,10 @@ Future<void> elementCreate(BuildContext context) async {
                       },
                       onTap: () {
                         if (isUpdatingRooms) {
-                          return null;
+                          return;
                         }
                       },
-                      disabledHint: Text('Loading rooms...'),
+                      disabledHint: const Text('Loading rooms...'),
                       dropdownColor: isUpdatingRooms ? Colors.grey[300] : null,
                     ),
                     SizedBox(
