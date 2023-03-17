@@ -1,29 +1,23 @@
 class Block {
   final String name;
-  final bool luz;
 
-  Block({required this.name, required this.luz});
+  Block({required this.name});
 
   factory Block.fromRTDB(Map<dynamic, dynamic> data) {
     return Block(
       name: data['name'] ?? 'Bloco misterioso',
-      luz: data['luz'] ?? false,
     );
   }
 }
 
 class Room {
   final String name;
-  final bool luz;
-  final bool air;
 
-  Room({required this.name, required this.luz, required this.air});
+  Room({required this.name});
 
   factory Room.fromRTDB(Map<dynamic, dynamic> data) {
     return Room(
       name: data['name'] ?? 'sala secreta',
-      luz: data['luz'] ?? false,
-      air: data['air'] ?? false,
     );
   }
 }
@@ -50,6 +44,22 @@ class Obj {
       room: data['room'] ?? 'sala secreta',
       stats: data['stats'] ?? false,
       type: data['type'] ?? 'typo indefinido',
+    );
+  }
+}
+
+class Request {
+  final String name;
+  final int pin;
+  final bool state;
+
+  Request({required this.name, required this.pin, required this.state});
+
+  factory Request.fromRTDB(Map<dynamic, dynamic> data) {
+    return Request(
+      name: data['name'] ?? 'unnow name',
+      pin: data['pin'] ?? 0,
+      state: data['state'] ?? false,
     );
   }
 }

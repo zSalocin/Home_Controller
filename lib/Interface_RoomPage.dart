@@ -1,6 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:tcc_2023/alerts_and_checks.dart';
 import 'package:tcc_2023/class.dart';
+import 'package:tcc_2023/firebase_services.dart';
 
 class RoomPage extends StatefulWidget {
   final String roomName;
@@ -14,6 +16,7 @@ class RoomPage extends StatefulWidget {
 
 class _RoomPageState extends State<RoomPage> {
   final database = FirebaseDatabase.instance.ref();
+  final FirebaseService firebaseService = FirebaseService();
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +79,14 @@ class _RoomPageState extends State<RoomPage> {
                     ? Icons.power_settings_new
                     : Icons.power_settings_new_outlined,
               ),
-              onPressed: () {
-                //TODO fazer a parte do firebase
+              onPressed: () async {
+                if (!await requestCheck(widget.blocoName, element.name)) {
+                  firebaseService.createRequest(widget.blocoName, element.name,
+                      element.pin, element.stats);
+                } else {
+                  dialogBox(context, 'Request Denied',
+                      'Alrealdy have a request in line to this element');
+                }
               },
             ),
           ],

@@ -9,7 +9,6 @@ Future<void> blockCreate(BuildContext context) async {
   String blockName = "";
   final formKey = GlobalKey<FormState>();
   bool isDialogOpen = false;
-
   if (!isDialogOpen) {
     isDialogOpen = true;
     () => isDialogOpen = false;
@@ -44,10 +43,15 @@ Future<void> blockCreate(BuildContext context) async {
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
                           formKey.currentState!.save();
-                          firebaseService.createBlock(blockName);
-                          Navigator.pop(context);
-                          dialogBox(context, 'Notification',
-                              'The Block was created successfully');
+                          if (await blockCheck(blockName)) {
+                            dialogBox(context, 'Error',
+                                'A block with the same name already exists');
+                          } else {
+                            firebaseService.createBlock(blockName);
+                            Navigator.pop(context);
+                            dialogBox(context, 'Notification',
+                                'The Block was created successfully');
+                          }
                         }
                       },
                       child: const Text('send'),
@@ -133,10 +137,16 @@ Future<void> roomCreate(BuildContext context) async {
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
-                            firebaseService.createRoom(selectedBlock, roomName);
-                            Navigator.pop(context);
-                            dialogBox(context, 'Notification',
-                                'The room was created successfully');
+                            if (await roomCheck(roomName, selectedBlock)) {
+                              dialogBox(context, 'Error',
+                                  'A Room with the same name already exists');
+                            } else {
+                              firebaseService.createRoom(
+                                  selectedBlock, roomName);
+                              Navigator.pop(context);
+                              dialogBox(context, 'Notification',
+                                  'The room was created successfully');
+                            }
                           }
                         },
                         child: const Text('send'),
@@ -173,7 +183,6 @@ Future<void> elementCreate(BuildContext context) async {
   String selectedPin = "";
   bool isDialogOpen = false;
   bool isUpdatingRooms = true;
-
   if (!isDialogOpen) {
     isDialogOpen = true;
     () => isDialogOpen = false;
@@ -336,15 +345,23 @@ Future<void> elementCreate(BuildContext context) async {
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
                           formKey.currentState!.save();
-                          firebaseService.createElement(
-                              selectedBlock,
-                              selectedRoom,
-                              elementName,
-                              selectedElement,
-                              int.parse(selectedPin));
-                          Navigator.pop(context);
-                          dialogBox(context, 'Notification',
-                              'The Element was created successfully');
+                          if (await elementCheck(elementName, selectedBlock)) {
+                            dialogBox(context, 'Error',
+                                'A Element with the same name already exists');
+                          } else if (await pinCheck(
+                              selectedBlock, selectedPin)) {
+                            dialogBox(context, 'Error', 'Invalid Pin number');
+                          } else {
+                            firebaseService.createElement(
+                                selectedBlock,
+                                selectedRoom,
+                                elementName,
+                                selectedElement,
+                                int.parse(selectedPin));
+                            Navigator.pop(context);
+                            dialogBox(context, 'Notification',
+                                'The Element was created successfully');
+                          }
                         }
                       },
                       child: const Text('send'),
