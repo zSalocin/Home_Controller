@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'firebase_call.dart';
 import 'firebase_services.dart';
 import 'class.dart';
+import 'alerts_and_checks.dart';
 
 class CONFIG extends StatefulWidget {
   const CONFIG({super.key});
@@ -54,35 +55,62 @@ class CONFIGState extends State<CONFIG> {
                 Column(
                   children: [
                     Container(
-                        color: Colors.blue,
-                        alignment: Alignment.centerRight,
-                        height: MediaQuery.of(context).size.height -
-                            AppBar().preferredSize.height -
-                            MediaQuery.of(context).padding.top,
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        child: StreamBuilder(
-                            stream: database
-                                .child('Blocos/$selectedBlock/Elements')
-                                .onValue,
-                            builder: (context, snapshot) {
-                              List item = [];
-                              if (snapshot.hasData) {
-                                Map<String, dynamic> data =
-                                    (snapshot.data! as dynamic).snapshot.value;
-                                data.forEach((index, data) =>
-                                    item.add({'key': index, ...data}));
-                                return ListView.builder(
-                                  itemCount: item.length,
-                                  itemBuilder: (BuildContext context,
-                                          int index) =>
-                                      buildCard(
-                                          context, Obj.fromRTDB(item[index])),
-                                );
-                              } else {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            })),
+                      color: Colors.blue,
+                      alignment: Alignment.centerRight,
+                      height: MediaQuery.of(context).size.height -
+                          AppBar().preferredSize.height -
+                          MediaQuery.of(context).padding.top,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: StreamBuilder(
+                        stream: database
+                            .child('/Blocos/$selectedBlock/Elements/')
+                            .onValue,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data?.snapshot.value == null) {
+                            return Center(
+                                child: TextButton(
+                              onPressed: () {
+                                elementCreate(context);
+                              },
+                              child: const Text("Create a Button"),
+                            ));
+                          }
+                          List item = [];
+                          if (snapshot.hasData) {
+                            Map<String, dynamic> data =
+                                (snapshot.data! as dynamic).snapshot.value;
+                            data.forEach((index, data) =>
+                                item.add({'key': index, ...data}));
+                            if (item.isEmpty) {
+                              return Center(
+                                  child: elementCreateDialogBox(
+                                      context,
+                                      'No Elements Found',
+                                      'Please add a Element'));
+                            } else {
+                              return ListView.builder(
+                                itemCount: item.length,
+                                itemBuilder:
+                                    (BuildContext context, int index) =>
+                                        buildCard(
+                                            context, Obj.fromRTDB(item[index])),
+                              );
+                            }
+                          } else {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                        },
+                      ),
+                    ),
                   ],
                 ),
                 Column(

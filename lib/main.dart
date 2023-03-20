@@ -1,39 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tcc_2023/config_page.dart';
-import 'package:tcc_2023/interface_page.dart';
-import 'firebase_call.dart';
+import 'interface_page.dart';
 import 'firebase_options.dart';
+import 'alerts_and_checks.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '1.5',
+      title: 'My App',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        textTheme: const TextTheme(
+          headline6: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24.0,
+          ),
+        ),
       ),
       home: FutureBuilder(
-        future: _fbApp,
+        future: Firebase.initializeApp(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            print('error${snapshot.error.toString()}');
-            return Text('error');
-          } else if (snapshot.hasData) {
-            return const MyHomePage(title: 'Home Page');
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.error != null) {
+              return Scaffold(
+                body: Center(
+                    child: wdialogBox(
+                        context, 'Error', snapshot.error.toString())),
+              );
+            } else {
+              return const HomePage();
+            }
           } else {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
         },
@@ -42,75 +55,30 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  final String title;
-
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(title),
+        title: const Text('Home Page'),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: Colors.greenAccent,
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Card(
-              color: Colors.grey,
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.1,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('Click to go'),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const INTERFACE(),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        elementCreate(context);
-                      },
-                      child: Text('stats'),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CONFIG(),
-                          ),
-                        );
-                      },
-                      child: Text('config'),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => INTERFACE(),
-                          ),
-                        );
-                      },
-                      child: Text('Admin'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  );
+                },
+                child: const Text("Entry"))
           ],
         ),
       ),

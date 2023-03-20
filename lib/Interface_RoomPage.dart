@@ -2,7 +2,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:tcc_2023/alerts_and_checks.dart';
 import 'package:tcc_2023/class.dart';
+import 'package:tcc_2023/firebase_call.dart';
 import 'package:tcc_2023/firebase_services.dart';
+import 'config_page.dart';
+
+//TODO make the card color, background color, and bar color like all another apps, pick like a requerid maybe
+//TODO fazer os testes restantes como o teste de encher uma sala de elementos a infinito pra ver o comportamento
 
 class RoomPage extends StatefulWidget {
   final String roomName;
@@ -22,33 +27,60 @@ class _RoomPageState extends State<RoomPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(widget.roomName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              elementCreate(context);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CONFIG(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Container(
-          color: Colors.blue,
-          child: StreamBuilder(
-              stream: database
-                  .child('/Blocos/${widget.blocoName}/Elements/')
-                  .onValue,
-              builder: (context, snapshot) {
-                List item = [];
-                if (snapshot.hasData) {
-                  Map<String, dynamic> data =
-                      (snapshot.data! as dynamic).snapshot.value;
-                  data.forEach(
-                      (index, data) => item.add({'key': index, ...data}));
-                  item = item
-                      .where((element) => element['room'] == widget.roomName)
-                      .toList();
-                  return ListView.builder(
-                    itemCount: item.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        buildCard(context, Obj.fromRTDB(item[index])),
-                  );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              })),
+        color: const Color.fromARGB(255, 68, 127, 175),
+        child: StreamBuilder(
+          stream:
+              database.child('/Blocos/${widget.blocoName}/Elements/').onValue,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData ||
+                snapshot.data?.snapshot.value == null) {
+              return Center(
+                child: elementCreateDialogBox(
+                    context, 'No Element Found', 'Please add an Element'),
+              );
+            }
+            List item = [];
+            Map<String, dynamic> data =
+                snapshot.data!.snapshot.value as Map<String, dynamic>;
+            data.forEach((index, data) => item.add({'key': index, ...data}));
+            item = item
+                .where((element) => element['room'] == widget.roomName)
+                .toList();
+            return ListView.builder(
+              itemCount: item.length,
+              itemBuilder: (BuildContext context, int index) =>
+                  buildCard(context, Obj.fromRTDB(item[index])),
+            );
+          },
+        ),
+      ),
     );
   }
 

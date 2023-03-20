@@ -1,9 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:tcc_2023/alerts_and_checks.dart';
+import 'package:tcc_2023/firebase_call.dart';
 
 import 'class.dart';
 import 'FireBase_Services.dart';
 import 'interface_roompage.dart';
+import 'config_page.dart';
 
 class INTERFACE extends StatefulWidget {
   const INTERFACE({super.key});
@@ -22,27 +25,64 @@ class INTERFACEState extends State<INTERFACE> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Command Page"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              blockCreate(context);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CONFIG(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Container(
           color: Colors.blue,
           child: StreamBuilder(
-              stream: _database.child('Blocos').onValue,
-              builder: (context, snapshot) {
-                List item = [];
-                if (snapshot.hasData) {
-                  Map<String, dynamic> data =
-                      (snapshot.data! as dynamic).snapshot.value;
-                  data.forEach(
-                      (index, data) => item.add({'key': index, ...data}));
+            stream: _database.child('Blocos').onValue,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData ||
+                  snapshot.data?.snapshot.value == null) {
+                return Center(
+                  child: blockCreateDialogBox(
+                      context, 'No Block Found', 'Please add an Block'),
+                );
+              }
+              List item = [];
+              if (snapshot.hasData) {
+                Map<String, dynamic> data =
+                    (snapshot.data! as dynamic).snapshot.value;
+                data.forEach(
+                    (index, data) => item.add({'key': index, ...data}));
+                if (item.isEmpty) {
+                  return Center(
+                      child: blockCreateDialogBox(
+                          context, 'No Blocks Found', 'Please add a Block'));
+                } else {
                   return ListView.builder(
                     itemCount: item.length,
                     itemBuilder: (BuildContext context, int index) =>
                         buildCard(context, Block.fromRTDB(item[index])),
                   );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
                 }
-              })),
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          )),
     );
   }
 
@@ -72,7 +112,6 @@ class INTERFACEState extends State<INTERFACE> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List<String> rooms = snapshot.data as List<String>;
-                print('rooms: $rooms');
                 return Container(
                   decoration: BoxDecoration(
                     border: Border(
@@ -137,10 +176,8 @@ class INTERFACEState extends State<INTERFACE> {
                   ),
                 );
               } else if (snapshot.hasError) {
-                print('error: ${snapshot.error}');
                 return Text('Error: ${snapshot.error}');
               } else {
-                print('loading...');
                 return const SizedBox(
                     height: 50,
                     child: Center(child: CircularProgressIndicator()));
@@ -165,8 +202,6 @@ class INTERFACEState extends State<INTERFACE> {
   }
 }
 
-
-//TODO adicionar funcionalidade aos botoes e botao para navegar para a pagina de rooms
 
 //TODO adicionar botoes para acender ou apagar todos elementos dentro de um bloco e sala
 

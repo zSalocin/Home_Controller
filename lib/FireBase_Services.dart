@@ -2,10 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 
 //TODO adicionar try catch aos metodos para evitar error
 
-//TODO adicionar um verificador na criação para checar se uma sala, bloco ou elemento de mesmo nome existe
-
-//TODO adicionar um verificador na criação de elementos para impedir pin repetidos dentro do mesmo bloco
-
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 

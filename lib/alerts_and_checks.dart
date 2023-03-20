@@ -1,5 +1,6 @@
 // ignore: camel_case_types
 import 'dart:async';
+import 'package:tcc_2023/firebase_call.dart';
 import 'package:tcc_2023/firebase_services.dart';
 import 'package:flutter/material.dart';
 
@@ -83,15 +84,64 @@ Widget wdialogBox(BuildContext context, String tittle, String text) {
   );
 }
 
+Widget blockCreateDialogBox(BuildContext context, String tittle, String text) {
+  return AlertDialog(
+      title: Text(tittle),
+      content: Text(text),
+      actions: <Widget>[
+        Center(
+          child: Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  blockCreate(context);
+                },
+                child: const Text('Create a Block'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('close'),
+              ),
+            ],
+          ),
+        ),
+      ]);
+}
+
+Widget elementCreateDialogBox(
+    BuildContext context, String tittle, String text) {
+  return AlertDialog(
+      title: Text(tittle),
+      content: Text(text),
+      actions: <Widget>[
+        Center(
+          child: Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  elementCreate(context);
+                },
+                child: const Text('Create a Element'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('close'),
+              ),
+            ],
+          ),
+        ),
+      ]);
+}
+
 Future<bool> pinCheck(String blockName, String pin) async {
   final permitedPins = {1, 2, 3, 4, 5};
   FirebaseService firebaseService = FirebaseService();
   final elementPins = await firebaseService.getElementPins(blockName);
   final intPin = int.tryParse(pin);
-  print(elementPins);
-  print(intPin);
-  print(permitedPins.contains(intPin));
-  print(!elementPins.contains(intPin));
   if (permitedPins.contains(intPin) && !elementPins.contains(intPin)) {
     return false;
   }
