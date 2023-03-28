@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blueGrey,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: const TextTheme(
-          headline6: TextStyle(
+          titleLarge: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24.0,
           ),

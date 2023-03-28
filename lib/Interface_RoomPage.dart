@@ -96,11 +96,11 @@ class _RoomPageState extends State<RoomPage> {
                 children: [
                   Text(
                     element.name,
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
                     element.type,
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],
               ),
