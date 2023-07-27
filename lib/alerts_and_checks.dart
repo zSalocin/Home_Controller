@@ -1,4 +1,3 @@
-// ignore: camel_case_types
 import 'dart:async';
 import 'package:tcc_2023/firebase_call.dart';
 import 'package:tcc_2023/firebase_services.dart';
