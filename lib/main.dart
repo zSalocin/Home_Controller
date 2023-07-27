@@ -4,16 +4,13 @@ import 'interface_page.dart';
 import 'firebase_options.dart';
 import 'alerts_and_checks.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +27,20 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: FutureBuilder(
-        future: Firebase.initializeApp(),
+        future: Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.error != null) {
               return Scaffold(
                 body: Center(
-                    child: wdialogBox(
-                        context, 'Error', snapshot.error.toString())),
+                  child: wdialogBox(
+                    context,
+                    'Error',
+                    snapshot.error.toString(),
+                  ),
+                ),
               );
             } else {
               return const HomePage();
@@ -60,27 +63,67 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Home Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const INTERFACE(),
-                    ),
-                  );
-                },
-                child: const Text("Entry"))
-          ],
-        ),
+      body: Stack(
+        children: [
+          // Background image
+          Image.asset(
+            'assets/background_image.jpg', // Replace with your image path
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Center(
+            child: FractionallySizedBox(
+              widthFactor: 0.3,
+              heightFactor: 0.3,
+              child: Container(
+                padding: const EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'User Name',
+                        ),
+                      ),
+                      const SizedBox(
+                          height: 20), // Add some spacing between fields
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Password',
+                        ),
+                        obscureText: true,
+                      ),
+                      const SizedBox(
+                          height: 20), // Add some spacing between fields
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const INTERFACE(),
+                            ),
+                          );
+                        },
+                        child: const Text("Entry"),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
