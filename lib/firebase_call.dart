@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'alerts_and_checks.dart';
 import 'firebase_services.dart';
 
+//TODO corrigir erros de sync
+
 //TODO adicioar indicadores de aguardar resposta, alem de adicionar mensagens de possiveis erros
 
 Future<void> blockCreate(BuildContext context) async {

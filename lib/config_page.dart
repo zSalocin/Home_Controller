@@ -220,3 +220,6 @@ class CONFIGState extends State<CONFIG> {
     );
   }
 }
+
+
+//Fazer layout resposivel

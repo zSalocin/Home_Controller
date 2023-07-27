@@ -1,7 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
 
-//TODO adicionar try catch aos metodos para evitar error
-
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
@@ -182,3 +180,5 @@ class FirebaseService {
     return elementPins;
   }
 }
+
+//Adicionar retornos com mensagens de erros se possivel.

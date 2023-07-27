@@ -6,9 +6,6 @@ import 'package:tcc_2023/firebase_call.dart';
 import 'package:tcc_2023/firebase_services.dart';
 import 'config_page.dart';
 
-//TODO make the card color, background color, and bar color like all another apps, pick like a requerid maybe
-//TODO fazer os testes restantes como o teste de encher uma sala de elementos a infinito pra ver o comportamento
-
 class RoomPage extends StatefulWidget {
   final String roomName;
   final String blocoName;
@@ -127,3 +124,11 @@ class _RoomPageState extends State<RoomPage> {
     );
   }
 }
+
+// Adicionar ao criar um elemento de dentro da pagina de sala, trave a criacao do elemento no bloco e sala
+
+//TODO make the card color, background color, and bar color like all another apps, pick like a requerid maybe
+
+//TODO fazer os testes restantes como o teste de encher uma sala de elementos a infinito pra ver o comportamento
+
+//TOO adicionar layout resposivel 

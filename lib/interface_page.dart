@@ -4,7 +4,7 @@ import 'package:tcc_2023/alerts_and_checks.dart';
 import 'package:tcc_2023/firebase_call.dart';
 
 import 'class.dart';
-import 'FireBase_Services.dart';
+import 'firebase_services.dart';
 import 'interface_roompage.dart';
 import 'config_page.dart';
 
@@ -202,9 +202,16 @@ class INTERFACEState extends State<INTERFACE> {
   }
 }
 
+//TODO adiconar caso haja salas no bloco ao abrir o tile aparece um tile informando deseja criar uma sala.
 
 //TODO adicionar botoes para acender ou apagar todos elementos dentro de um bloco e sala
+
+//TODO adiconar erro caso ao aceder ou apagar todos elementos dentro de um bloco e sala, caso nao haja nenhum elemento
 
 //TODO adicionar contador para salas e elementos no bloco
 
 //TODO adicionar um check para verificar se a algum elemento ativo no bloco e alterar icono conforme
+
+//TODO adicionar encase de erro caso nao encontre o firebase se possivel
+
+//TOO adicionar layout resposivel 
