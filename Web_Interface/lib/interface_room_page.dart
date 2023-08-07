@@ -4,13 +4,13 @@ import 'package:tcc_2023/alerts_and_checks.dart';
 import 'package:tcc_2023/class.dart';
 import 'package:tcc_2023/firebase_call.dart';
 import 'package:tcc_2023/firebase_services.dart';
-import 'config_page.dart';
+import 'interface_config_blocks.dart';
 
 class RoomPage extends StatefulWidget {
   final String roomName;
-  final String blocoName;
+  final String blockName;
 
-  const RoomPage({super.key, required this.roomName, required this.blocoName});
+  const RoomPage({super.key, required this.roomName, required this.blockName});
 
   @override
   State<RoomPage> createState() => _RoomPageState();
@@ -30,7 +30,7 @@ class _RoomPageState extends State<RoomPage> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              elementCreate(context);
+              eelementCreate(context, widget.blockName, widget.roomName);
             },
           ),
           IconButton(
@@ -39,7 +39,8 @@ class _RoomPageState extends State<RoomPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CONFIG(),
+                  builder: (context) =>
+                      BlockConfig(blockName: widget.blockName),
                 ),
               );
             },
@@ -50,7 +51,7 @@ class _RoomPageState extends State<RoomPage> {
         color: const Color.fromARGB(255, 68, 127, 175),
         child: StreamBuilder(
           stream:
-              database.child('/Blocos/${widget.blocoName}/Elements/').onValue,
+              database.child('/Blocos/${widget.blockName}/Elements/').onValue,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -103,20 +104,50 @@ class _RoomPageState extends State<RoomPage> {
               ),
             ),
             IconButton(
-              icon: Icon(
-                element.stats
-                    ? Icons.power_settings_new
-                    : Icons.power_settings_new_outlined,
+              icon: AnimatedContainer(
+                duration: const Duration(
+                    milliseconds:
+                        200), // Duração da animação (pode ajustar conforme necessário)
+                decoration: BoxDecoration(
+                  color: element.stats ? Colors.green.withOpacity(0.5) : null,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  element.stats
+                      ? Icons.power_settings_new
+                      : Icons.power_settings_new_outlined,
+                  color: element.stats ? Colors.green : null,
+                ),
               ),
               onPressed: () async {
-                if (!await requestCheck(widget.blocoName, element.name)) {
-                  firebaseService.createRequest(widget.blocoName, element.name,
-                      element.pin, element.stats);
+                if (!await requestCheck(widget.blockName, element.name)) {
+                  firebaseService.createRequest(widget.blockName, element.name,
+                      element.pin, !element.stats);
                 } else {
-                  dialogBox(context, 'Request Denied',
-                      'Alrealdy have a request in line to this element');
+                  // ignore: use_build_context_synchronously
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Request Denied'),
+                        content: const Text(
+                            'Already have a request in line for this element'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 }
               },
+              tooltip: element.stats
+                  ? 'Turn Off'
+                  : 'Turn On', // Tooltip a ser exibida
             ),
           ],
         ),

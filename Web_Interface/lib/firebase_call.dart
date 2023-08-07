@@ -46,11 +46,14 @@ Future<void> blockCreate(BuildContext context) async {
                         if (formKey.currentState!.validate()) {
                           formKey.currentState!.save();
                           if (await blockCheck(blockName)) {
+                            // ignore: use_build_context_synchronously
                             dialogBox(context, 'Error',
                                 'A block with the same name already exists');
                           } else {
                             firebaseService.createBlock(blockName);
+                            // ignore: use_build_context_synchronously
                             Navigator.pop(context);
+                            // ignore: use_build_context_synchronously
                             dialogBox(context, 'Notification',
                                 'The Block was created successfully');
                           }
@@ -78,6 +81,7 @@ Future<void> roomCreate(BuildContext context) async {
   if (!isDialogOpen) {
     isDialogOpen = true;
     () => isDialogOpen = false;
+    // ignore: use_build_context_synchronously
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -140,12 +144,15 @@ Future<void> roomCreate(BuildContext context) async {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
                             if (await roomCheck(roomName, selectedBlock)) {
+                              // ignore: use_build_context_synchronously
                               dialogBox(context, 'Error',
                                   'A Room with the same name already exists');
                             } else {
                               firebaseService.createRoom(
                                   selectedBlock, roomName);
+                              // ignore: use_build_context_synchronously
                               Navigator.pop(context);
+                              // ignore: use_build_context_synchronously
                               dialogBox(context, 'Notification',
                                   'The room was created successfully');
                             }
@@ -171,6 +178,7 @@ List<String> itemStyle = [
   "Presence Sensor",
   "Current Sensor"
 ];
+
 Future<void> elementCreate(BuildContext context) async {
   //TODO consertar error de quando muda o bloco crasha a aplicação pq a lista do dropbutton nao pode ser alterada.
   final FirebaseService firebaseService = FirebaseService();
@@ -188,6 +196,7 @@ Future<void> elementCreate(BuildContext context) async {
   if (!isDialogOpen) {
     isDialogOpen = true;
     () => isDialogOpen = false;
+    // ignore: use_build_context_synchronously
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -348,10 +357,12 @@ Future<void> elementCreate(BuildContext context) async {
                         if (formKey.currentState!.validate()) {
                           formKey.currentState!.save();
                           if (await elementCheck(elementName, selectedBlock)) {
+                            // ignore: use_build_context_synchronously
                             dialogBox(context, 'Error',
                                 'A Element with the same name already exists');
                           } else if (await pinCheck(
                               selectedBlock, selectedPin)) {
+                            // ignore: use_build_context_synchronously
                             dialogBox(context, 'Error', 'Invalid Pin number');
                           } else {
                             firebaseService.createElement(
@@ -360,7 +371,174 @@ Future<void> elementCreate(BuildContext context) async {
                                 elementName,
                                 selectedElement,
                                 int.parse(selectedPin));
+                            // ignore: use_build_context_synchronously
                             Navigator.pop(context);
+                            // ignore: use_build_context_synchronously
+                            dialogBox(context, 'Notification',
+                                'The Element was created successfully');
+                          }
+                        }
+                      },
+                      child: const Text('send'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+}
+
+Future<void> preElementCreate(BuildContext context) async {
+  final formKey = GlobalKey<FormState>();
+  bool isDialogOpen = false;
+  if (!isDialogOpen) {
+    isDialogOpen = true;
+    () => isDialogOpen = false;
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Select the Element Type'),
+            actions: <Widget>[
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {},
+                      child: const Text('Sensor Types'),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {},
+                      child: const Text('Actuator Types'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+}
+
+Future<void> eelementCreate(
+    BuildContext context, String selectedBlock, String selectedRoom) async {
+  final FirebaseService firebaseService = FirebaseService();
+  final formKey = GlobalKey<FormState>();
+  String selectedElement = "";
+  String elementName = "";
+  String selectedPin = "";
+  bool isDialogOpen = false;
+  if (!isDialogOpen) {
+    isDialogOpen = true;
+    () => isDialogOpen = false;
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Create a Element'),
+            actions: <Widget>[
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Element Name',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a Element name';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => elementName = value!,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    //---------------------Element type
+                    DropdownButtonFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Element Type',
+                      ),
+                      items: itemStyle
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) => selectedElement = value!,
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a Element Type';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    //---------------------Element pin
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Element Pin',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a Element Pin';
+                        }
+                        if (!isInt(value)) {
+                          return 'Please enter a number';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => selectedPin = value!,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          formKey.currentState!.save();
+                          if (await elementCheck(elementName, selectedBlock)) {
+                            // ignore: use_build_context_synchronously
+                            dialogBox(context, 'Error',
+                                'A Element with the same name already exists');
+                          } else if (await pinCheck(
+                              selectedBlock, selectedPin)) {
+                            // ignore: use_build_context_synchronously
+                            dialogBox(context, 'Error', 'Invalid Pin number');
+                          } else {
+                            firebaseService.createElement(
+                                selectedBlock,
+                                selectedRoom,
+                                elementName,
+                                selectedElement,
+                                int.parse(selectedPin));
+                            // ignore: use_build_context_synchronously
+                            Navigator.pop(context);
+                            // ignore: use_build_context_synchronously
                             dialogBox(context, 'Notification',
                                 'The Element was created successfully');
                           }

@@ -5,8 +5,9 @@ import 'package:tcc_2023/firebase_call.dart';
 
 import 'class.dart';
 import 'firebase_services.dart';
-import 'interface_roompage.dart';
-import 'config_page.dart';
+import 'interface_config_blocks.dart';
+import 'interface_room_page.dart';
+import 'interface_config_users.dart';
 
 class INTERFACE extends StatefulWidget {
   const INTERFACE({super.key});
@@ -38,7 +39,7 @@ class INTERFACEState extends State<INTERFACE> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CONFIG(),
+                  builder: (context) => const UserConfig(),
                 ),
               );
             },
@@ -95,12 +96,16 @@ class INTERFACEState extends State<INTERFACE> {
             Row(
               children: <Widget>[
                 IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.lightbulb_circle_outlined),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.ac_unit_outlined),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            BlockConfig(blockName: bloco.name),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.settings),
                 ),
               ],
             ),
@@ -163,7 +168,7 @@ class INTERFACEState extends State<INTERFACE> {
                                     MaterialPageRoute(
                                       builder: (context) => RoomPage(
                                           roomName: rooms[index],
-                                          blocoName: bloco.name),
+                                          blockName: bloco.name),
                                     ),
                                   );
                                 },
@@ -201,6 +206,8 @@ class INTERFACEState extends State<INTERFACE> {
     );
   }
 }
+
+//remover botoes de luz e ar condicionado isso vai para config page
 
 //TODO adiconar caso haja salas no bloco ao abrir o tile aparece um tile informando deseja criar uma sala.
 

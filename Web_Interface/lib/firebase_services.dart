@@ -143,7 +143,7 @@ class FirebaseService {
     final resquest = <String, dynamic>{
       'name': elementName,
       'pin': pin,
-      'stats': false,
+      'stats': state,
     };
     await _database
         .ref()

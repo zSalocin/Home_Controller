@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'interface_page.dart';
+import 'interface_blocks_page.dart';
 import 'firebase_options.dart';
 import 'alerts_and_checks.dart';
 
