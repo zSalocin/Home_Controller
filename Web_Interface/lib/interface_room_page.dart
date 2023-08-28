@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:tcc_2023/alerts_and_checks.dart';
+import 'package:tcc_2023/components.dart';
 import 'package:tcc_2023/class.dart';
 import 'package:tcc_2023/firebase_call.dart';
 import 'package:tcc_2023/firebase_services.dart';
@@ -61,7 +61,11 @@ class _RoomPageState extends State<RoomPage> {
                 snapshot.data?.snapshot.value == null) {
               return Center(
                 child: elementCreateDialogBox(
-                    context, 'No Element Found', 'Please add an Element'),
+                    context,
+                    'No Element Found',
+                    'Please add an Element 1',
+                    widget.blockName,
+                    widget.roomName),
               );
             }
             List item = [];

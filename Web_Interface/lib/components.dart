@@ -109,8 +109,8 @@ Widget blockCreateDialogBox(BuildContext context, String tittle, String text) {
       ]);
 }
 
-Widget elementCreateDialogBox(
-    BuildContext context, String tittle, String text) {
+Widget elementCreateDialogBox(BuildContext context, String tittle, String text,
+    String blockName, String roomName) {
   return AlertDialog(
       title: Text(tittle),
       content: Text(text),
@@ -120,7 +120,7 @@ Widget elementCreateDialogBox(
             children: [
               TextButton(
                 onPressed: () {
-                  elementCreate(context);
+                  eelementCreate(context, blockName, roomName);
                 },
                 child: const Text('Create a Element'),
               ),
@@ -136,8 +136,35 @@ Widget elementCreateDialogBox(
       ]);
 }
 
-Future<bool> pinCheck(String blockName, String pin) async {
-  final permitedPins = {1, 2, 3, 4, 5};
+Widget eelementCreateDialogBox(
+    BuildContext context, String tittle, String text, String blockName) {
+  return AlertDialog(
+      title: Text(tittle),
+      content: Text(text),
+      actions: <Widget>[
+        Center(
+          child: Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  nelementCreate(context, blockName);
+                },
+                child: const Text('Create a Element'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('close'),
+              ),
+            ],
+          ),
+        ),
+      ]);
+}
+
+Future<bool> pinCheck(
+    String blockName, String pin, List<int> permitedPins) async {
   FirebaseService firebaseService = FirebaseService();
   final elementPins = await firebaseService.getElementPins(blockName);
   final intPin = int.tryParse(pin);
@@ -156,17 +183,17 @@ Future<bool> requestCheck(String blockName, String elementName) async {
 Future<bool> blockCheck(String blockName) async {
   final FirebaseService firebaseService = FirebaseService();
   final item = await firebaseService.getBlocks();
-  return item.contains('Bloco $blockName');
+  return item.contains(blockName);
 }
 
 Future<bool> roomCheck(String roomName, String blockName) async {
   final FirebaseService firebaseService = FirebaseService();
   final item = await firebaseService.getRooms(blockName);
-  return item.contains('Sala $roomName');
+  return item.contains(roomName);
 }
 
 Future<bool> elementCheck(String elementName, String blockName) async {
   final FirebaseService firebaseService = FirebaseService();
   final item = await firebaseService.getElement(blockName);
-  return item.contains('Element $elementName');
+  return item.contains(elementName);
 }

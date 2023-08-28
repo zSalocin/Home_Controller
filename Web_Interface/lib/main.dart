@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'interface_blocks_page.dart';
 import 'firebase_options.dart';
-import 'alerts_and_checks.dart';
+import 'components.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,49 +75,54 @@ class HomePage extends StatelessWidget {
             height: double.infinity,
           ),
           Center(
-            child: FractionallySizedBox(
-              widthFactor: 0.3,
-              heightFactor: 0.3,
-              child: Container(
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'User Name',
-                        ),
-                      ),
-                      const SizedBox(
-                          height: 20), // Add some spacing between fields
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Password',
-                        ),
-                        obscureText: true,
-                      ),
-                      const SizedBox(
-                          height: 20), // Add some spacing between fields
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const INTERFACE(),
+            child: Align(
+              alignment: Alignment.center,
+              child: FractionallySizedBox(
+                widthFactor: 0.3,
+                heightFactor: 0.3,
+                child: Container(
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Form(
+                    key: formKey,
+                    child: Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'User Name',
                             ),
-                          );
-                        },
-                        child: const Text("Entry"),
-                      )
-                    ],
+                          ),
+                          const SizedBox(
+                              height: 20), // Add some spacing between fields
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Password',
+                            ),
+                            obscureText: true,
+                          ),
+                          const SizedBox(
+                              height: 20), // Add some spacing between fields
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const INTERFACE(),
+                                ),
+                              );
+                            },
+                            child: const Text("Entry"),
+                          )
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),

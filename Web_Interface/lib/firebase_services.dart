@@ -71,10 +71,10 @@ class FirebaseService {
 
   Future<void> createBlock(String blockName) async {
     final block = <String, dynamic>{
-      'name': 'Bloco $blockName',
+      'name': blockName,
     };
     try {
-      await _database.ref().child('/Blocos/Bloco $blockName').update(block);
+      await _database.ref().child('/Blocos/$blockName').update(block);
     } catch (e) {
       print('Error updating block: $e');
     }
@@ -91,12 +91,9 @@ class FirebaseService {
 
   Future<void> createRoom(String block, String roomName) async {
     final room = <String, dynamic>{
-      'name': 'Sala $roomName',
+      'name': roomName,
     };
-    await _database
-        .ref()
-        .child('/Blocos/$block/rooms/Sala $roomName')
-        .update(room);
+    await _database.ref().child('/Blocos/$block/rooms/$roomName').update(room);
   }
 
   Future<void> updateRoom(
@@ -109,17 +106,18 @@ class FirebaseService {
   }
 
   Future<void> createElement(String blockName, String roomName,
-      String elementName, String type, int pin) async {
+      String elementName, String type, int pin, bool enableStats) async {
     final element = <String, dynamic>{
       'room': roomName,
-      'name': 'Element $elementName',
+      'name': elementName,
       'type': type,
-      'stats': false,
       'pin': pin,
+      'enable': enableStats,
+      'stats': false,
     };
     await _database
         .ref()
-        .child('/Blocos/$blockName/Elements/Element $elementName')
+        .child('/Blocos/$blockName/Elements/$elementName')
         .update(element);
   }
 
@@ -179,6 +177,23 @@ class FirebaseService {
     }
     return elementPins;
   }
+
+  Future<void> createAttach(
+      String blockName, elementName, int pin, List<int> attachPins) async {
+    final attach = <String, dynamic>{
+      'name': elementName,
+      'pin': pin,
+      'connectpins': attachPins,
+    };
+
+    await _database
+        .ref()
+        .child('/Blocos/$blockName/Sensors/$elementName')
+        .update(attach);
+  }
 }
 
+
 //Adicionar retornos com mensagens de erros se possivel.
+
+//Corrigir problema de quando so há numeros como nome de um bloco, sala ou elemento ele da erro na leitura

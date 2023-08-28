@@ -28,6 +28,7 @@ class Obj {
   final String type;
   final bool stats;
   final int pin;
+  bool enable;
 
   Obj({
     required this.name,
@@ -35,6 +36,7 @@ class Obj {
     required this.room,
     required this.stats,
     required this.pin,
+    required this.enable,
   });
 
   factory Obj.fromRTDB(Map<dynamic, dynamic> data) {
@@ -42,8 +44,9 @@ class Obj {
       name: data['name'] ?? 'nome oculto',
       pin: data['pin'] ?? 0,
       room: data['room'] ?? 'sala secreta',
-      stats: data['stats'] ?? false,
       type: data['type'] ?? 'typo indefinido',
+      enable: data['enable'] ?? false,
+      stats: data['stats'] ?? false,
     );
   }
 }

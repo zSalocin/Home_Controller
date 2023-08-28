@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
-import 'alerts_and_checks.dart';
+import 'components.dart';
 import 'firebase_services.dart';
 
 //TODO corrigir erros de sync
 
 //TODO adicioar indicadores de aguardar resposta, alem de adicionar mensagens de possiveis erros
+
+//TODO tornar pins uma lista de pins disponiveis em vez de um campo de escrita
+
+List<int> permitedPins = [1, 2, 3, 4, 5];
+List<String> itemStyle = [
+  "Light",
+  "Air-Conditioner",
+  "Presence Sensor",
+  "Current Sensor"
+];
 
 Future<void> blockCreate(BuildContext context) async {
   final FirebaseService firebaseService = FirebaseService();
@@ -171,13 +181,6 @@ Future<void> roomCreate(BuildContext context) async {
     );
   }
 }
-
-List<String> itemStyle = [
-  "Light",
-  "Air-Conditioner",
-  "Presence Sensor",
-  "Current Sensor"
-];
 
 Future<void> elementCreate(BuildContext context) async {
   //TODO consertar error de quando muda o bloco crasha a aplicação pq a lista do dropbutton nao pode ser alterada.
@@ -361,16 +364,18 @@ Future<void> elementCreate(BuildContext context) async {
                             dialogBox(context, 'Error',
                                 'A Element with the same name already exists');
                           } else if (await pinCheck(
-                              selectedBlock, selectedPin)) {
+                              selectedBlock, selectedPin, permitedPins)) {
                             // ignore: use_build_context_synchronously
                             dialogBox(context, 'Error', 'Invalid Pin number');
                           } else {
                             firebaseService.createElement(
-                                selectedBlock,
-                                selectedRoom,
-                                elementName,
-                                selectedElement,
-                                int.parse(selectedPin));
+                              selectedBlock,
+                              selectedRoom,
+                              elementName,
+                              selectedElement,
+                              int.parse(selectedPin),
+                              false,
+                            );
                             // ignore: use_build_context_synchronously
                             Navigator.pop(context);
                             // ignore: use_build_context_synchronously
@@ -432,6 +437,80 @@ Future<void> preElementCreate(BuildContext context) async {
   }
 }
 
+//new room create
+Future<void> eroomCreate(BuildContext context, String selectedBlock) async {
+  final FirebaseService firebaseService = FirebaseService();
+  final formKey = GlobalKey<FormState>();
+  String roomName = '';
+  bool isDialogOpen = false;
+
+  if (!isDialogOpen) {
+    isDialogOpen = true;
+    () => isDialogOpen = false;
+    // ignore: use_build_context_synchronously
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Create a Room'),
+              actions: <Widget>[
+                Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Room Name',
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a room name';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) => roomName = value!,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.01,
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState!.save();
+                            if (await roomCheck(roomName, selectedBlock)) {
+                              // ignore: use_build_context_synchronously
+                              dialogBox(context, 'Error',
+                                  'A Room with the same name already exists');
+                            } else {
+                              firebaseService.createRoom(
+                                  selectedBlock, roomName);
+                              // ignore: use_build_context_synchronously
+                              Navigator.pop(context);
+                              // ignore: use_build_context_synchronously
+                              dialogBox(context, 'Notification',
+                                  'The room was created successfully');
+                            }
+                          }
+                        },
+                        child: const Text('send'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+// new elements
 Future<void> eelementCreate(
     BuildContext context, String selectedBlock, String selectedRoom) async {
   final FirebaseService firebaseService = FirebaseService();
@@ -526,16 +605,184 @@ Future<void> eelementCreate(
                             dialogBox(context, 'Error',
                                 'A Element with the same name already exists');
                           } else if (await pinCheck(
-                              selectedBlock, selectedPin)) {
+                              selectedBlock, selectedPin, permitedPins)) {
                             // ignore: use_build_context_synchronously
                             dialogBox(context, 'Error', 'Invalid Pin number');
                           } else {
                             firebaseService.createElement(
-                                selectedBlock,
-                                selectedRoom,
-                                elementName,
-                                selectedElement,
-                                int.parse(selectedPin));
+                              selectedBlock,
+                              selectedRoom,
+                              elementName,
+                              selectedElement,
+                              int.parse(selectedPin),
+                              false,
+                            );
+                            // ignore: use_build_context_synchronously
+                            Navigator.pop(context);
+                            // ignore: use_build_context_synchronously
+                            dialogBox(context, 'Notification',
+                                'The Element was created successfully');
+                          }
+                        }
+                      },
+                      child: const Text('send'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+}
+
+Future<void> nelementCreate(BuildContext context, String selectedBlock) async {
+  final FirebaseService firebaseService = FirebaseService();
+  final formKey = GlobalKey<FormState>();
+  final roomcheck = await firebaseService.getRooms(selectedBlock);
+  List<String> rooms = [];
+  String selectedRoom = rooms.isNotEmpty ? rooms[0] : "";
+  String selectedElement = "";
+  String elementName = "";
+  String selectedPin = "";
+  bool isDialogOpen = false;
+  if (!isDialogOpen) {
+    isDialogOpen = true;
+    () => isDialogOpen = false;
+    // ignore: use_build_context_synchronously
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          if (!roomcheck.isNotEmpty) {
+            return wdialogBox(context, "Notification",
+                "No Rooms were found, please create a room first");
+          } else {
+            rooms = roomcheck;
+          }
+          return AlertDialog(
+            title: const Text('Create a Room'),
+            actions: <Widget>[
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Element Name',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a Element name';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => elementName = value!,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    //---------------------Element type
+                    DropdownButtonFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Element Type',
+                      ),
+                      items: itemStyle
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) => selectedElement = value!,
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a Element Type';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    //---------------------Element pin
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Element Pin',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a Element Pin';
+                        }
+                        if (!isInt(value)) {
+                          return 'Please enter a number';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => selectedPin = value!,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+//---------------------Room
+                    DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Room name',
+                      ),
+                      items: rooms.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedRoom = value!;
+                        });
+                      },
+                      value: selectedRoom.isNotEmpty ? selectedRoom : null,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a Room';
+                        }
+                        return null;
+                      },
+                      dropdownColor: Colors.grey[300],
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          formKey.currentState!.save();
+                          if (await elementCheck(elementName, selectedBlock)) {
+                            // ignore: use_build_context_synchronously
+                            dialogBox(context, 'Error',
+                                'A Element with the same name already exists');
+                          } else if (await pinCheck(
+                              selectedBlock, selectedPin, permitedPins)) {
+                            // ignore: use_build_context_synchronously
+                            dialogBox(context, 'Error', 'Invalid Pin number');
+                          } else {
+                            firebaseService.createElement(
+                              selectedBlock,
+                              selectedRoom,
+                              elementName,
+                              selectedElement,
+                              int.parse(selectedPin),
+                              false,
+                            );
                             // ignore: use_build_context_synchronously
                             Navigator.pop(context);
                             // ignore: use_build_context_synchronously

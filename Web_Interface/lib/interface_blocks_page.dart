@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:tcc_2023/alerts_and_checks.dart';
+import 'package:tcc_2023/components.dart';
 import 'package:tcc_2023/firebase_call.dart';
 
 import 'class.dart';
@@ -106,6 +106,12 @@ class INTERFACEState extends State<INTERFACE> {
                     );
                   },
                   icon: const Icon(Icons.settings),
+                ),
+                IconButton(
+                  onPressed: () {
+                    eroomCreate(context, bloco.name);
+                  },
+                  icon: const Icon(Icons.add),
                 ),
               ],
             ),
