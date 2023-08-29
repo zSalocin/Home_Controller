@@ -1,7 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:tcc_2023/components.dart';
-import 'package:tcc_2023/firebase_call.dart';
 
 import 'class.dart';
 import 'firebase_services.dart';
@@ -109,7 +108,7 @@ class INTERFACEState extends State<INTERFACE> {
                 ),
                 IconButton(
                   onPressed: () {
-                    eroomCreate(context, bloco.name);
+                    roomCreate(context: context, blockName: bloco.name);
                   },
                   icon: const Icon(Icons.add),
                 ),

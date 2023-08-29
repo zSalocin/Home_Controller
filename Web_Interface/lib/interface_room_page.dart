@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:tcc_2023/components.dart';
 import 'package:tcc_2023/class.dart';
-import 'package:tcc_2023/firebase_call.dart';
 import 'package:tcc_2023/firebase_services.dart';
 import 'interface_config_blocks.dart';
 
@@ -30,7 +29,10 @@ class _RoomPageState extends State<RoomPage> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              eelementCreate(context, widget.blockName, widget.roomName);
+              elementCreate(
+                  context: context,
+                  selectedBlock: widget.blockName,
+                  roomName: widget.roomName);
             },
           ),
           IconButton(
@@ -125,7 +127,7 @@ class _RoomPageState extends State<RoomPage> {
               ),
               onPressed: () async {
                 if (!await requestCheck(widget.blockName, element.name)) {
-                  firebaseService.createRequest(widget.blockName, element.name,
+                  firebaseService.setRequest(widget.blockName, element.name,
                       element.pin, !element.stats);
                 } else {
                   // ignore: use_build_context_synchronously

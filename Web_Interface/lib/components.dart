@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:tcc_2023/firebase_call.dart';
-import 'package:tcc_2023/firebase_services.dart';
 import 'package:flutter/material.dart';
+
+import 'firebase_services.dart';
 
 bool isInt(String value) {
   try {
@@ -11,6 +11,8 @@ bool isInt(String value) {
     return false;
   }
 }
+
+// Dialog Box Components
 
 void dialogBox(BuildContext context, String tittle, String text) {
   showDialog<void>(
@@ -120,7 +122,10 @@ Widget elementCreateDialogBox(BuildContext context, String tittle, String text,
             children: [
               TextButton(
                 onPressed: () {
-                  eelementCreate(context, blockName, roomName);
+                  elementCreate(
+                      context: context,
+                      selectedBlock: blockName,
+                      roomName: roomName);
                 },
                 child: const Text('Create a Element'),
               ),
@@ -147,7 +152,7 @@ Widget eelementCreateDialogBox(
             children: [
               TextButton(
                 onPressed: () {
-                  nelementCreate(context, blockName);
+                  elementCreate(context: context, selectedBlock: blockName);
                 },
                 child: const Text('Create a Element'),
               ),
@@ -163,37 +168,332 @@ Widget eelementCreateDialogBox(
       ]);
 }
 
-Future<bool> pinCheck(
-    String blockName, String pin, List<int> permitedPins) async {
-  FirebaseService firebaseService = FirebaseService();
-  final elementPins = await firebaseService.getElementPins(blockName);
-  final intPin = int.tryParse(pin);
-  if (permitedPins.contains(intPin) && !elementPins.contains(intPin)) {
-    return false;
-  }
-  return true;
-}
+// ---------------------------- Create Instances Database Components -----------------------------------------------------------------------------
 
-Future<bool> requestCheck(String blockName, String elementName) async {
+Future<void> blockCreate(BuildContext context) async {
   final FirebaseService firebaseService = FirebaseService();
-  final item = await firebaseService.getRequest(blockName);
-  return item.contains(elementName);
+  String blockName = "";
+  final formKey = GlobalKey<FormState>();
+  bool isDialogOpen = false;
+  if (!isDialogOpen) {
+    isDialogOpen = true;
+    () => isDialogOpen = false;
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Create a Block'),
+          actions: <Widget>[
+            Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Block Name',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a block name';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => blockName = value!,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          formKey.currentState!.save();
+                          Navigator.pop(context);
+                          dialogBox(context, 'Notification',
+                              await firebaseService.setBlock(blockName));
+                        }
+                      },
+                      child: const Text('create'),
+                    ),
+                  ],
+                )),
+          ],
+        );
+      },
+    );
+  }
 }
 
-Future<bool> blockCheck(String blockName) async {
+Future<void> roomCreate(
+    {required BuildContext context, String? blockName}) async {
   final FirebaseService firebaseService = FirebaseService();
   final item = await firebaseService.getBlocks();
-  return item.contains(blockName);
+  final formKey = GlobalKey<FormState>();
+  String selectedBlock = item.isNotEmpty ? item[0] : "";
+  String roomName = item.isNotEmpty ? item[0] : "";
+  bool isDialogOpen = false;
+  if (blockName != null) {
+    selectedBlock = blockName;
+  }
+  if (!isDialogOpen) {
+    isDialogOpen = true;
+    () => isDialogOpen = false;
+    // ignore: use_build_context_synchronously
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            if (!item.isNotEmpty) {
+              return wdialogBox(context, 'Notification',
+                  'No Blocks were found, please create a block first');
+            }
+            return AlertDialog(
+              title: const Text('Create a Room'),
+              actions: <Widget>[
+                Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Room Name',
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a room name';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) => roomName = value!,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.01,
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      if (blockName == null) ...[
+                        DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'block name',
+                          ),
+                          items: item
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (value) => selectedBlock = value!,
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Please select a block';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.01,
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                      ],
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState!.save();
+                            Navigator.pop(context);
+                            dialogBox(
+                                context,
+                                'Notification',
+                                await firebaseService.setRoom(
+                                    selectedBlock, roomName));
+                          }
+                        },
+                        child: const Text('create'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
-Future<bool> roomCheck(String roomName, String blockName) async {
-  final FirebaseService firebaseService = FirebaseService();
-  final item = await firebaseService.getRooms(blockName);
-  return item.contains(roomName);
-}
+List<String> itemStyle = [
+  "Light",
+  "Air-Conditioner",
+  "Presence Sensor",
+  "Current Sensor"
+];
 
-Future<bool> elementCheck(String elementName, String blockName) async {
+//TODO make the itemStyle List import from backend or esp
+//TODO Make the pins a dropdownButton
+
+Future<void> elementCreate(
+    {required BuildContext context,
+    required String selectedBlock,
+    String? roomName}) async {
   final FirebaseService firebaseService = FirebaseService();
-  final item = await firebaseService.getElement(blockName);
-  return item.contains(elementName);
+  final formKey = GlobalKey<FormState>();
+  final roomcheck = await firebaseService.getRooms(selectedBlock);
+  List<String> rooms = [];
+  String selectedRoom = rooms.isNotEmpty ? rooms[0] : "";
+  String selectedElement = "";
+  String elementName = "";
+  String selectedPin = "";
+  bool isDialogOpen = false;
+  if (roomName != null) {
+    selectedRoom = roomName;
+  }
+  if (!isDialogOpen) {
+    isDialogOpen = true;
+    () => isDialogOpen = false;
+    // ignore: use_build_context_synchronously
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          if (!roomcheck.isNotEmpty) {
+            return wdialogBox(context, "Notification",
+                "No Rooms were found, please create a room first");
+          } else {
+            rooms = roomcheck;
+          }
+          return AlertDialog(
+            title: const Text('Create a Room'),
+            actions: <Widget>[
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Element Name',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a Element name';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => elementName = value!,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    //---------------------Element type
+                    DropdownButtonFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Element Type',
+                      ),
+                      items: itemStyle
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) => selectedElement = value!,
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a Element Type';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    //---------------------Element pin
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Element Pin',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a Element Pin';
+                        }
+                        if (!isInt(value)) {
+                          return 'Please enter a number';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => selectedPin = value!,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+//---------------------Room
+                    if (roomName == null) ...[
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Room name',
+                        ),
+                        items: rooms.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedRoom = value!;
+                          });
+                        },
+                        value: selectedRoom.isNotEmpty ? selectedRoom : null,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a Room';
+                          }
+                          return null;
+                        },
+                        dropdownColor: Colors.grey[300],
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.01,
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                    ],
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          formKey.currentState!.save();
+                          Navigator.pop(context);
+                          dialogBox(
+                              context,
+                              'Notification',
+                              await firebaseService.setElement(
+                                selectedBlock,
+                                selectedRoom,
+                                elementName,
+                                selectedElement,
+                                int.parse(selectedPin),
+                                false,
+                              ));
+                        }
+                      },
+                      child: const Text('create'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
 }

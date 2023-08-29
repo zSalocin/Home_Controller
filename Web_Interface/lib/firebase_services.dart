@@ -3,6 +3,44 @@ import 'package:firebase_database/firebase_database.dart';
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
+// Pins Methods
+
+  Future<List<int>> getDigitalPins(String blockName) async {
+    try {
+      final snapshot =
+          await _database.ref().child('/Blocos/$blockName/Config').once();
+      final config = snapshot.snapshot.value as Map<String, dynamic>;
+
+      if (config.containsKey('ControllerDigitalPins')) {
+        final digitalPins = config['ControllerDigitalPins'] as List<dynamic>;
+        return List<int>.from(digitalPins);
+      } else {
+        return [-1]; // Return an empty list if the key is not present
+      }
+    } catch (e) {
+      return [-1];
+    }
+  }
+
+  Future<List<int>> getAnalogPins(String blockName) async {
+    try {
+      final snapshot =
+          await _database.ref().child('/Blocos/$blockName/Config').once();
+      final config = snapshot.snapshot.value as Map<String, dynamic>;
+
+      if (config.containsKey('ControllerAnalogPins')) {
+        final analogPins = config['ControllerAnalogPins'] as List<dynamic>;
+        return List<int>.from(analogPins);
+      } else {
+        return [-1]; // Return an empty list if the key is not present
+      }
+    } catch (e) {
+      return [-1];
+    }
+  }
+
+// Block Methods
+
   Future<List<String>> getBlocks() async {
     final blocks = <String>[];
     final blocksRef = _database.ref().child("Blocos");
@@ -16,6 +54,57 @@ class FirebaseService {
     return blocks;
   }
 
+  Future<String> setBlock(String blockName) async {
+    final block = <String, dynamic>{
+      'name': blockName,
+    };
+    final config = <String, dynamic>{
+      'name': blockName,
+      'ControllerNamer': "none",
+      'ControllerType': "none",
+      'ControllerDigitalPins': [
+        1,
+        2,
+        3,
+        4,
+        5
+      ], //TODO THIS SHOUD BE REMOVE LATER
+      'ControllerAnalogPins:': [],
+    };
+    if (await blockCheck(blockName)) {
+      return "The Block $blockName was not create sucessfully due a block with the same name already exist";
+    } else {
+      try {
+        await _database.ref().child('/Blocos/$blockName').update(block);
+        await _database.ref().child('/Blocos/$blockName/Config').update(config);
+        return "The Block $blockName was created successfully";
+      } catch (e) {
+        return "The Block $blockName was not created successfully due $e";
+      }
+    }
+  }
+
+  Future<String> updateBlock(
+      String blockName, Map<String, dynamic> updates) async {
+    try {
+      _database.ref().child('/Blocos/$blockName').update(updates);
+      return "The Block $blockName was updated successfully";
+    } catch (e) {
+      return "The Block $blockName was not updated successfully due $e";
+    }
+  }
+
+  Future<String> removeBlock(String blockName) async {
+    try {
+      await _database.ref().child('/Blocos/$blockName').remove();
+      return "The Block $blockName was removed successfully";
+    } catch (e) {
+      return "The Block $blockName was not removed successfully due $e";
+    }
+  }
+
+// Rooms Methods
+
   Future<List<String>> getRooms(String blockName) async {
     final rooms = <String>[];
     final roomsRef = _database.ref().child("/Blocos/$blockName/rooms/");
@@ -28,6 +117,46 @@ class FirebaseService {
     });
     return rooms;
   }
+
+  Future<String> setRoom(String blockName, String roomName) async {
+    final room = <String, dynamic>{
+      'name': roomName,
+    };
+    if (await roomCheck(roomName, blockName)) {
+      return "The Room $roomName was not create sucessfully due a room with the same name already exist";
+    } else {
+      try {
+        await _database
+            .ref()
+            .child('/Blocos/$blockName/rooms/$roomName')
+            .update(room);
+        return "The Room $roomName was created successfully";
+      } catch (e) {
+        return "The Room $roomName was not created successfully due $e";
+      }
+    }
+  }
+
+  Future<String> updateRoom(
+      String block, String roomName, Map<String, dynamic> updates) async {
+    try {
+      _database.ref().child('/Blocos/$block/rooms/$roomName').update(updates);
+      return "The Room $roomName was created successfully";
+    } catch (e) {
+      return "The Room $roomName was not created successfully due $e";
+    }
+  }
+
+  Future<String> removeRoom(String block, String roomName) async {
+    try {
+      await _database.ref().child('/Blocos/$block/rooms/$roomName').remove();
+      return "The Room $roomName was removed successfully";
+    } catch (e) {
+      return "The Room $roomName was not removed successfully due $e";
+    }
+  }
+
+// Elements Methods
 
   Future<List<String>> getElement(String blockName) async {
     final element = <String>[];
@@ -56,6 +185,74 @@ class FirebaseService {
     return element;
   }
 
+  Future<String> setElement(
+    String blockName,
+    String roomName,
+    String elementName,
+    String type,
+    int pin,
+    bool enableStats,
+  ) async {
+    final element = <String, dynamic>{
+      'room': roomName,
+      'name': elementName,
+      'type': type,
+      'pin': pin,
+      'enable': enableStats,
+      'stats': false,
+    };
+    final elementExists = await elementCheck(elementName, blockName);
+    if (elementExists) {
+      return "The Element $elementName was not create sucessfully due a element with the same name already exist";
+    } else {
+      final digitalPins = await getDigitalPins(blockName);
+      if (digitalPins == null) {
+        return "Please Connect a ESP to the block for set the avalaible pins";
+      } else {
+        if (await pinCheck(blockName, pin, digitalPins)) {
+          return "The Element $elementName was not create sucessfully due a element with the same pin already exist";
+        } else {
+          try {
+            await _database
+                .ref()
+                .child('/Blocos/$blockName/Elements/$elementName')
+                .update(element);
+            return "The Element $elementName was created successfully";
+          } catch (e) {
+            return "The Element $elementName was not created successfully due $e";
+          }
+        }
+      }
+    }
+  }
+
+  Future<String> updateElement(String blockName, String elementName,
+      Map<String, dynamic> updates) async {
+    try {
+      _database
+          .ref()
+          .child('/Blocos/$blockName/Elements/$elementName')
+          .update(updates);
+      return "The Element $elementName was updated successfully";
+    } catch (e) {
+      return "The Element $elementName was not updated successfully due $e";
+    }
+  }
+
+  Future<String> removeElement(String blockName, String elementName) async {
+    try {
+      await _database
+          .ref()
+          .child('/Blocos/$blockName/Elements/$elementName')
+          .remove();
+      return "The Element $elementName was removed successfully";
+    } catch (e) {
+      return "The Element $elementName was not removed successfully due $e";
+    }
+  }
+
+  // Request Methods
+
   Future<List<String>> getRequest(String block) async {
     final request = <String>[];
     final requestRef = _database.ref().child("/Blocos/$block/Request/");
@@ -69,91 +266,34 @@ class FirebaseService {
     return request;
   }
 
-  Future<void> createBlock(String blockName) async {
-    final block = <String, dynamic>{
-      'name': blockName,
-    };
-    try {
-      await _database.ref().child('/Blocos/$blockName').update(block);
-    } catch (e) {
-      print('Error updating block: $e');
-    }
-  }
-
-  Future<void> updateBlock(
-      String blockName, Map<String, dynamic> updates) async {
-    _database.ref().child('/Blocos/$blockName').update(updates);
-  }
-
-  Future<void> deleteBlock(String blockName) async {
-    await _database.ref().child('/Blocos/$blockName').remove();
-  }
-
-  Future<void> createRoom(String block, String roomName) async {
-    final room = <String, dynamic>{
-      'name': roomName,
-    };
-    await _database.ref().child('/Blocos/$block/rooms/$roomName').update(room);
-  }
-
-  Future<void> updateRoom(
-      String block, String roomName, Map<String, dynamic> updates) async {
-    _database.ref().child('/Blocos/$block/rooms/$roomName').update(updates);
-  }
-
-  Future<void> deleteRoom(String block, String roomName) async {
-    await _database.ref().child('/Blocos/$block/rooms/$roomName').remove();
-  }
-
-  Future<void> createElement(String blockName, String roomName,
-      String elementName, String type, int pin, bool enableStats) async {
-    final element = <String, dynamic>{
-      'room': roomName,
-      'name': elementName,
-      'type': type,
-      'pin': pin,
-      'enable': enableStats,
-      'stats': false,
-    };
-    await _database
-        .ref()
-        .child('/Blocos/$blockName/Elements/$elementName')
-        .update(element);
-  }
-
-  Future<void> updateElement(String blockName, String elementName,
-      Map<String, dynamic> updates) async {
-    _database
-        .ref()
-        .child('/Blocos/$blockName/Elements/$elementName')
-        .update(updates);
-  }
-
-  Future<void> deleteElement(String blockName, String elementName) async {
-    await _database
-        .ref()
-        .child('/Blocos/$blockName/Elements/$elementName')
-        .remove();
-  }
-
-  Future<void> createRequest(
+  Future<String> setRequest(
       String blockName, String elementName, int pin, bool state) async {
     final resquest = <String, dynamic>{
       'name': elementName,
       'pin': pin,
       'stats': state,
     };
-    await _database
-        .ref()
-        .child('/Blocos/$blockName/Request/$elementName')
-        .update(resquest);
+    try {
+      await _database
+          .ref()
+          .child('/Blocos/$blockName/Request/$elementName')
+          .update(resquest);
+      return "The Request for $elementName was created successfully";
+    } catch (e) {
+      return "The Request for $elementName was not created successfully due $e";
+    }
   }
 
-  Future<void> deleteRequest(String blockName, String elementName) async {
-    await _database
-        .ref()
-        .child('/Blocos/$blockName/Request/$elementName')
-        .remove();
+  Future<String> removeRequest(String blockName, String elementName) async {
+    try {
+      await _database
+          .ref()
+          .child('/Blocos/$blockName/Request/$elementName')
+          .remove();
+      return "The Request for $elementName was removed successfully";
+    } catch (e) {
+      return "The Request for $elementName was not removed successfully due $e";
+    }
   }
 
   Future<List<int>> getElementPins(String blockName) async {
@@ -173,12 +313,14 @@ class FirebaseService {
         }
       });
     } catch (e) {
-      print('Error getting element pins: $e');
+      return [-1];
     }
     return elementPins;
   }
 
-  Future<void> createAttach(
+// Attach pins in Sensors
+
+  Future<void> setAttach(
       String blockName, elementName, int pin, List<int> attachPins) async {
     final attach = <String, dynamic>{
       'name': elementName,
@@ -192,6 +334,42 @@ class FirebaseService {
         .update(attach);
   }
 }
+
+// Verify Methods
+
+Future<bool> pinCheck(String blockName, int pin, List<int> permitedPins) async {
+  FirebaseService firebaseService = FirebaseService();
+  final elementPins = await firebaseService.getElementPins(blockName);
+  if (permitedPins.contains(pin) && !elementPins.contains(pin)) {
+    return false;
+  }
+  return true;
+}
+
+Future<bool> requestCheck(String blockName, String elementName) async {
+  final FirebaseService firebaseService = FirebaseService();
+  final item = await firebaseService.getRequest(blockName);
+  return item.contains(elementName);
+}
+
+Future<bool> blockCheck(String blockName) async {
+  final FirebaseService firebaseService = FirebaseService();
+  final item = await firebaseService.getBlocks();
+  return item.contains(blockName);
+}
+
+Future<bool> roomCheck(String roomName, String blockName) async {
+  final FirebaseService firebaseService = FirebaseService();
+  final item = await firebaseService.getRooms(blockName);
+  return item.contains(roomName);
+}
+
+Future<bool> elementCheck(String elementName, String blockName) async {
+  final FirebaseService firebaseService = FirebaseService();
+  final item = await firebaseService.getElement(blockName);
+  return item.contains(elementName);
+}
+
 
 
 //Adicionar retornos com mensagens de erros se possivel.

@@ -133,3 +133,17 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+
+//TODO ordens
+// Atualizar metodos do firebase OK
+// Atualizar firebaseCALL + components (concertar os firebasecall e jogar isso pra components)
+// Adicionar o pin Attach para sensores classe e metodos ja feitos?
+// Completar pagina de config
+// Completar pagina de roomPage
+// Atualizar programa do ESP
+
+// --- Metas pos TCC
+
+// Atualizar tudo pra conter usuarios e permissoes
+// fazer BackEnd separado

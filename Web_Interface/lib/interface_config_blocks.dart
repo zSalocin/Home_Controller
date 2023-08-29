@@ -1,6 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'firebase_call.dart';
 import 'firebase_services.dart';
 import 'class.dart';
 import 'components.dart';
@@ -180,7 +179,9 @@ class BlockConfigState extends State<BlockConfig> {
                           return Center(
                               child: TextButton(
                             onPressed: () {
-                              elementCreate(context);
+                              elementCreate(
+                                  context: context,
+                                  selectedBlock: widget.blockName);
                             },
                             child: const Text("Create a Button"),
                           ));
@@ -307,13 +308,8 @@ class BlockConfigState extends State<BlockConfig> {
                 ),
               ),
               onPressed: () async {
-                await firebaseService.createElement(
-                    widget.blockName,
-                    element.room,
-                    element.name,
-                    element.type,
-                    element.pin,
-                    !element.enable);
+                await firebaseService.setElement(widget.blockName, element.room,
+                    element.name, element.type, element.pin, !element.enable);
               },
               tooltip: element.enable
                   ? 'Turn Off'
@@ -363,13 +359,8 @@ class BlockConfigState extends State<BlockConfig> {
                 ),
               ),
               onPressed: () async {
-                await firebaseService.createElement(
-                    widget.blockName,
-                    element.room,
-                    element.name,
-                    element.type,
-                    element.pin,
-                    !element.enable);
+                await firebaseService.setElement(widget.blockName, element.room,
+                    element.name, element.type, element.pin, !element.enable);
               },
               tooltip: element.enable
                   ? 'Turn Off'
