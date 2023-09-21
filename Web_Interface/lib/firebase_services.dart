@@ -206,6 +206,8 @@ class FirebaseService {
       return "The Element $elementName was not create sucessfully due a element with the same name already exist";
     } else {
       final digitalPins = await getDigitalPins(blockName);
+      //         -----------------------------------------------------------------------see later
+      // ignore: unnecessary_null_comparison
       if (digitalPins == null) {
         return "Please Connect a ESP to the block for set the avalaible pins";
       } else {
