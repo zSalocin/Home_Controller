@@ -4,9 +4,9 @@ import 'package:tcc_2023/components.dart';
 
 import 'class.dart';
 import 'firebase_services.dart';
-import 'interface_config_blocks.dart';
-import 'interface_room_page.dart';
-import 'interface_config_users.dart';
+import 'interface_configpage_blocks.dart';
+import 'interface_page_rooms.dart';
+import 'interface_configpage_users.dart';
 
 class INTERFACE extends StatefulWidget {
   const INTERFACE({super.key});

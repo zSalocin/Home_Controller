@@ -232,7 +232,7 @@ class BlockConfigState extends State<BlockConfig> {
                                     ),
                                   ),
                                 for (var sensor in sensors)
-                                  buildCardSensor(context, sensor),
+                                  buildCardSensor(context, sensor, actuators),
                                 if (actuators.isNotEmpty)
                                   const Card(
                                     color: Colors.grey,
@@ -321,53 +321,167 @@ class BlockConfigState extends State<BlockConfig> {
     );
   }
 
-  Widget buildCardSensor(BuildContext context, Obj element) {
+//TODO adicionar attach pins dos sensores aqui, e caso nao haja sensor fazer com oq nao apareça a aba sensores
+
+  // Widget buildCardSensor(BuildContext context, Obj element) {
+  //   return Card(
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(16.0),
+  //       child: Row(
+  //         children: [
+  //           Expanded(
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   element.name,
+  //                   style: Theme.of(context).textTheme.titleLarge,
+  //                 ),
+  //                 Text(
+  //                   element.type,
+  //                   style: Theme.of(context).textTheme.titleMedium,
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           IconButton(
+  //             icon: AnimatedContainer(
+  //               duration: const Duration(
+  //                   milliseconds:
+  //                       200), // Duração da animação (pode ajustar conforme necessário)
+  //               decoration: BoxDecoration(
+  //                 color: element.enable ? Colors.green.withOpacity(0.5) : null,
+  //                 shape: BoxShape.circle,
+  //               ),
+  //               child: Icon(
+  //                 element.enable
+  //                     ? Icons.power_settings_new
+  //                     : Icons.power_settings_new_outlined,
+  //                 color: element.stats ? Colors.green : null,
+  //               ),
+  //             ),
+  //             onPressed: () async {
+  //               await firebaseService.setElement(widget.blockName, element.room,
+  //                   element.name, element.type, element.pin, !element.enable);
+  //             },
+  //             tooltip: element.enable
+  //                 ? 'Turn Off'
+  //                 : 'Turn On', // Tooltip a ser exibida
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+//TODO Ajeitar isso aqui
+  Widget buildCardSensor(
+      BuildContext context, Obj element, List<Obj> actuators) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    element.name,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  Text(
-                    element.type,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: AnimatedContainer(
-                duration: const Duration(
-                    milliseconds:
-                        200), // Duração da animação (pode ajustar conforme necessário)
-                decoration: BoxDecoration(
-                  color: element.enable ? Colors.green.withOpacity(0.5) : null,
-                  shape: BoxShape.circle,
+      child: ExpansionTile(
+        title: Row(
+          children: <Widget>[
+            Text(element.name),
+            Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: null,
+                  icon: const Icon(Icons.settings),
                 ),
-                child: Icon(
-                  element.enable
-                      ? Icons.power_settings_new
-                      : Icons.power_settings_new_outlined,
-                  color: element.stats ? Colors.green : null,
+                IconButton(
+                  onPressed: () {
+                    elementAttach(
+                        context, widget.blockName, element, actuators);
+                  },
+                  icon: const Icon(Icons.add),
                 ),
-              ),
-              onPressed: () async {
-                await firebaseService.setElement(widget.blockName, element.room,
-                    element.name, element.type, element.pin, !element.enable);
-              },
-              tooltip: element.enable
-                  ? 'Turn Off'
-                  : 'Turn On', // Tooltip a ser exibida
+              ],
             ),
           ],
         ),
+        children: <Widget>[
+          FutureBuilder(
+            future: firebaseService.getAttach(widget.blockName, element.name),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                List<String> elementsattach = snapshot.data as List<String>;
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: Colors.grey.shade300),
+                      bottom: BorderSide(color: Colors.grey.shade300),
+                    ),
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: elementsattach.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.001,
+                      );
+                    },
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        //TODO editar para aparecer somente o nome e o pino do elemento conectado.
+                        color: Colors.orange,
+                        child: Padding(
+                          padding: const EdgeInsets.all(14.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                elementsattach[index],
+                                style: const TextStyle(
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  // Do something when edit button is pressed
+                                },
+                                icon:
+                                    const Icon(Icons.lightbulb_circle_outlined),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  // Do something when delete button is pressed
+                                },
+                                icon: const Icon(Icons.ac_unit_outlined),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                icon: const Icon(Icons.arrow_forward),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return const SizedBox(
+                    height: 50,
+                    child: Center(child: CircularProgressIndicator()));
+              }
+            },
+          ),
+          const Card(
+            margin: EdgeInsets.all(0),
+            color: Colors.transparent,
+            child: ListTile(
+              title: Text(
+                'Total de Salas:',
+              ),
+              subtitle: Text(
+                'Total de elementos: ',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -444,6 +558,5 @@ class BlockConfigState extends State<BlockConfig> {
     );
   }
 }
-
 
 //Fazer layout resposivel

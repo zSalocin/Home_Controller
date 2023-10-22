@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'interface_blocks_page.dart';
+import 'interface_page_blocks.dart';
 import 'firebase_options.dart';
 import 'components.dart';
 
@@ -134,6 +134,8 @@ class HomePage extends StatelessWidget {
   }
 }
 
+//TODO organizar tile de blocos, elementos, sensores
+//TODO concertar elementos havera um para ligar, e um para sinalizar se esta ligado, enable e stats ja esta na classe.
 
 //TODO ordens
 // Atualizar metodos do firebase OK

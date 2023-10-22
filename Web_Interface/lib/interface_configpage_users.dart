@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 //TODO in the future this interface page is to administer the users of program and permissions
+//a separação sera feita em root, adm, users, e permissoes setadas para eles.
 
 class UserConfig extends StatefulWidget {
   const UserConfig({super.key});

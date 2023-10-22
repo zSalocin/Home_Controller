@@ -3,6 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
+// TODO Atualizar Gets
+
 // Pins Methods
 
   Future<List<int>> getDigitalPins(String blockName) async {
@@ -185,6 +187,19 @@ class FirebaseService {
     return element;
   }
 
+  Future<List<String>> getElementbyPin(String blockName, int pin) async {
+    final element = <String>[];
+    final elementRef = _database.ref().child("/Blocos/$blockName/Elements/");
+    elementRef.onValue.listen((event) {
+      event.snapshot.children.map((child) {
+        if (child.key != null && child.child('pin').value == pin) {
+          element.add(child.key.toString());
+        }
+      }).toList();
+    });
+    return element;
+  }
+
   Future<String> setElement(
     String blockName,
     String roomName,
@@ -320,20 +335,61 @@ class FirebaseService {
     return elementPins;
   }
 
-// Attach pins in Sensors
+// Sensors Methods
 
-  Future<void> setAttach(
-      String blockName, elementName, int pin, List<int> attachPins) async {
+  Future<List<String>> getAttach(String blockName, String elementName) async {
+    final attach = <String>[];
+    final blocksRef =
+        _database.ref().child("/Blocos/$blockName/Sensors/$elementName");
+    blocksRef.onValue.listen((event) {
+      event.snapshot.children.map((child) {
+        if (child.key != null) {
+          attach.add(child.key.toString());
+        }
+      }).toList();
+    });
+    return attach;
+  }
+
+  Future<List<int>> getAttachPins(String blockName, String elementName) async {
+    final elementPins = <int>[];
+    final elementRef =
+        _database.ref().child("/Blocos/$blockName/Sensors/$elementName");
+    try {
+      elementRef.onValue.listen((event) {
+        final snapshot = event.snapshot;
+        if (snapshot.value != null) {
+          final children = snapshot.value as Map<dynamic, dynamic>;
+          children.forEach((key, value) {
+            final pin = value['connectpins'];
+            if (pin != null) {
+              elementPins.add(pin);
+            }
+          });
+        }
+      });
+    } catch (e) {
+      return [-1];
+    }
+    return elementPins;
+  }
+
+  Future<String> setAttach(String blockName, String elementName, int pin,
+      List<int> attachPins) async {
     final attach = <String, dynamic>{
       'name': elementName,
       'pin': pin,
       'connectpins': attachPins,
     };
-
-    await _database
-        .ref()
-        .child('/Blocos/$blockName/Sensors/$elementName')
-        .update(attach);
+    try {
+      await _database
+          .ref()
+          .child('/Blocos/$blockName/Sensors/$elementName')
+          .update(attach);
+      return "The Request for $elementName was attach successfully";
+    } catch (e) {
+      return "The Request for $elementName was not attach successfully due $e";
+    }
   }
 }
 

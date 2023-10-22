@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-
+import 'class.dart';
 import 'firebase_services.dart';
 
 bool isInt(String value) {
@@ -497,3 +497,79 @@ Future<void> elementCreate(
     );
   }
 }
+
+Future<void> elementAttach(BuildContext context, String blockName, Obj sensor,
+    List<Obj> actuator) async {
+  final FirebaseService firebaseService = FirebaseService();
+  String attachName = "";
+  final formKey = GlobalKey<FormState>();
+  bool isDialogOpen = false;
+  if (!isDialogOpen) {
+    isDialogOpen = true;
+    () => isDialogOpen = false;
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Attach a Actuator'),
+          actions: <Widget>[
+            Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    // add a dropdownbutton with the name of all actuators elements elements
+                    DropdownButtonFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Attach Element',
+                      ),
+                      items:
+                          actuator.map<DropdownMenuItem<Obj>>((Obj actuator) {
+                        return DropdownMenuItem<Obj>(
+                          value: actuator,
+                          child: Text(actuator.name),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        attachName = (value as Obj).name;
+                      },
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a Attach Element';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          formKey.currentState!.save();
+                          Navigator.pop(context);
+                          List<int> attachPins = await firebaseService
+                              .getAttachPins(blockName, sensor.name);
+                          Obj selectedActuator = actuator.firstWhere(
+                              (actuator) => actuator.name == attachName);
+                          attachPins.addAll([selectedActuator.pin]);
+                          dialogBox(
+                              context,
+                              'Notification',
+                              await firebaseService.setAttach(blockName,
+                                  sensor.name, sensor.pin, attachPins));
+                        }
+                      },
+                      child: const Text('create'),
+                    ),
+                  ],
+                )),
+          ],
+        );
+      },
+    );
+  }
+}
+
+//Adicionar menu flutuante para editar elemento e exluir

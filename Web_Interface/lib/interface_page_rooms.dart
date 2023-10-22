@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tcc_2023/components.dart';
 import 'package:tcc_2023/class.dart';
 import 'package:tcc_2023/firebase_services.dart';
-import 'interface_config_blocks.dart';
+import 'interface_configpage_blocks.dart';
 
 class RoomPage extends StatefulWidget {
   final String roomName;
