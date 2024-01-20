@@ -1,6 +1,9 @@
 # VSCODE
 .vscode
 
+#Node
+node_modules/
+
 ### Flutter ###
 # Flutter/Dart/Pub related
 **/doc/api/
