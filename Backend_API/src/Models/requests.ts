@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
-const request = new mongoose.Schema({
-    name: String,
-    pin: Number,
-    stats: Boolean
+const requestSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    pin: { type: Number, required: true },
+    stats: { type: Boolean, required: true },
   });
 
-  export default request;
+  export default requestSchema;

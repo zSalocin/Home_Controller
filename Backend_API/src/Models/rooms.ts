@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
-const room = new mongoose.Schema({
-    roomName: String
+const roomSchema = new mongoose.Schema({
+    roomName: { type: String, required: true }
   });
   
-  export default room;
+  export default roomSchema;
