@@ -1,11 +1,15 @@
 class Block {
+  final String id;
   final String name;
+  final List<dynamic> element;
 
-  Block({required this.name});
+  Block({required this.id, required this.name, required this.element});
 
-  factory Block.fromRTDB(Map<dynamic, dynamic> data) {
+  factory Block.fromJson(Map<String, dynamic> json) {
     return Block(
-      name: data['name'] ?? 'Bloco misterioso',
+      id: json['_id'] as String,
+      name: json['name'] as String,
+      element: json['element'] as List<dynamic>,
     );
   }
 }

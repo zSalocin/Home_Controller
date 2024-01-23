@@ -32,6 +32,15 @@ class BlockController {
     }
   }
 
+  async getElements(req: Request, res: Response) {
+    try {
+      const elementType = await blockService.getElementsType();
+      res.json(elementType);
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao buscar os tipos de elementos' });
+    }
+  }
+
   async addBlock(req: Request, res: Response) {
     const newBlockData = req.body;
   

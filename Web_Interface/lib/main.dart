@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'interface_page_blocks.dart';
 import 'firebase_options.dart';
 import 'components.dart';
+import 'backend_services.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -111,12 +112,14 @@ class HomePage extends StatelessWidget {
                               height: 20), // Add some spacing between fields
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const INTERFACE(),
-                                ),
-                              );
+                              checkConnectivity();
+                              fetchBlocks();
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => const INTERFACE(),
+                              //   ),
+                              // );
                             },
                             child: const Text("Entry"),
                           )
