@@ -1,16 +1,19 @@
-import Block from '../Models/blocks';
+import Block from '../Models/blocks_model';
+import rootUser from '../Models/users';
 
 class BlockService {
 
   ElementType = ['sensor', 'arcondicionado', 'outro_tipo'];
 
-  async getAllBlocks(): Promise<any[]> {
+  async getAllBlocks(userId: string): Promise<any[]> {
     try {
-      const blocks = await Block.find();
+      // Assuming user authentication is handled, and you have the user's ID
+      // You can use the user's ID to filter blocks if needed
+      const blocks = await Block.find({ userId });
       return blocks;
     } catch (error) {
       console.error('Error fetching all blocks:', error);
-      throw new Error('Erro ao buscar todos os blocos');
+      throw new Error('Error fetching all blocks');
     }
   }
 
@@ -38,31 +41,29 @@ class BlockService {
     return this.ElementType;
   }
 
-  async addBlock(newBlockData: any) {
+  async addBlock(userId: string, newBlockData: any) {
     try {
-      // Verifica se já existe um bloco com o mesmo nome
-      const existingBlock = await Block.findOne({ name: newBlockData.name });
+      const existingBlock = await Block.findOne({ name: newBlockData.name, userId });
   
       if (existingBlock) {
-        throw new Error('Um bloco com o mesmo nome já existe.');
+        throw new Error('A block with the same name already exists for this user.');
       }
   
-      // Cria um novo bloco se não houver conflito de nome
-      const newBlock = new Block(newBlockData);
+      const newBlock = new Block({ ...newBlockData, userId });
       await newBlock.save();
   
       return newBlock;
     } catch (error) {
-      if (error instanceof Error && error.message.includes('Um bloco com o mesmo nome já existe.')) {
-        // Mensagem específica para o caso de bloco com mesmo nome
-        throw new Error('Não é permitido adicionar blocos com o mesmo nome.');
+      console.error('Error creating a new block. Data:', newBlockData, 'UserId:', userId, 'Error:', error);
+      
+      if (error instanceof Error && error.message.includes('A block with the same name already exists for this user.')) {
+        throw new Error('Cannot add blocks with the same name for this user.');
       } else {
-        // Mensagem genérica para outros erros
-        console.error('Error creating a new block:', error);
-        throw new Error('Erro ao criar um novo bloco');
+        throw new Error('Error creating a new block');
       }
     }
   }
-}
+} 
+
 //TODO check the addBlock method, dosent working
 export default new BlockService();

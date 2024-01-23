@@ -27,7 +27,7 @@ server.listen(8080, () => {
     console.log('server running in http://localhost:8080/');
 });
 
-const MONGODB_URI = 'mongodb://192.168.48.227:27017/';
+const MONGODB_URI = 'mongodb://localhost:27017/';
 
 async function connectToMongo() {
     const options = {
@@ -60,3 +60,6 @@ async function connectToMongo() {
 }
 
 connectToMongo();
+
+
+//TODO MAKE ROUTES FOR ELEMENT ADD AND ELEMENT GET

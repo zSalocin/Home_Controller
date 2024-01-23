@@ -1,8 +1,11 @@
 // Routes/blocks_router.ts
 import express from 'express';
 import blockController from '../Controllers/blocks_controller';
+import { authenticateUser } from '../Midddlewares/auth_Middleware';
 
 const router = express.Router();
+
+router.use(authenticateUser);
 
 router.get('/', blockController.getAllBlocks);
 router.get('/:blockId/elements', blockController.getElementsInBlock);
@@ -26,3 +29,6 @@ router.post('/add', blockController.addBlock);
 // router.delete('/delete/:blockId/rooms/:roomsId', blockController.removeRoom);
 
 export default router;
+
+
+//TODO MAKE ROUTES FOR ELEMENT ADD AND ELEMENT GET

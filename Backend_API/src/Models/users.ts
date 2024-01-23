@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import blockSchema from './blocks'
+import blockModel from './blocks_model';
 import permissionSchema from './permissions'
 
 const userSchema = new mongoose.Schema({
@@ -12,8 +12,7 @@ const userSchema = new mongoose.Schema({
 const rootuserSchema = new mongoose.Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
-  numBlock: { type: Number, required: true },
-  block: [blockSchema]
+  numBlock: { type: Number, required: false },
 });
 
 export const rootuserModel = mongoose.model('rootUser', rootuserSchema);

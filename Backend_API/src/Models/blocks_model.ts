@@ -1,19 +1,10 @@
 import mongoose from 'mongoose';
+import elementSchema from './element_model';
 
 const requestSchema = new mongoose.Schema({
   name: { type: String, required: true },
   pin: { type: Number, required: true },
   stats: { type: Boolean, required: true },
-});
-
-const elementSchema = new mongoose.Schema({
-  enable: { type: Boolean, required: true },
-  stats: { type: Boolean, required: true },
-  pin: { type: Number, required: true },
-  elementName: { type: String, required: true },
-  elementRoom: { type: String, required: true },
-  elementType: { type: String, required: true },
-  attachPins: [Number] // Somente se elementType contiver 'sensor'
 });
 
 const roomSchema = new mongoose.Schema({
@@ -22,11 +13,12 @@ const roomSchema = new mongoose.Schema({
 
 
 const blockSchema = new mongoose.Schema({
+    userId: { type: String, required: true },
     name: { type: String, required: true },
     element: [elementSchema],
     requests: [requestSchema],
     room: [roomSchema],
-    sensor: [Number],
+    sensor: [{ type: Number }],
   });
   
 

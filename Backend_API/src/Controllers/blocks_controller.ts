@@ -1,16 +1,24 @@
 // controllers/blockController.js
 import { Request, Response } from 'express';
 import blockService from '../Services/blocks_services';
+import AuthenticatedRequest from '../Types/types';
 
 class BlockController {
-  async getAllBlocks(req: Request, res: Response) {
+  async getAllBlocks(req: AuthenticatedRequest, res: Response) {
     try {
-      const blocks = await blockService.getAllBlocks();
+      const userId = req.user?.userId;
+
+      if (!userId) {
+        return res.status(401).json({ error: 'User not authenticated' });
+      }
+
+      const blocks = await blockService.getAllBlocks(userId);
       res.json(blocks);
     } catch (error) {
-      res.status(500).json({ error: 'Erro ao buscar blocos' });
+      res.status(500).json({ error: 'Error fetching blocks' });
     }
   }
+
 
   async getElementsInBlock(req: Request, res: Response) {
     const blockId = req.params.blockId;
@@ -41,26 +49,26 @@ class BlockController {
     }
   }
 
-  async addBlock(req: Request, res: Response) {
+  async addBlock(req: AuthenticatedRequest, res: Response) {
+    const userId = req.user?.userId;
     const newBlockData = req.body;
-  
-    console.log('Request Body:', req.body);
-  
+
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
     try {
-      // Ensure "name" is present in the request body
       if (!newBlockData || !newBlockData.name) {
-        console.log('Invalid Request Data:', newBlockData);
         return res.status(400).json({ error: 'Name is required for a new block' });
       }
-  
-      const newBlock = await blockService.addBlock(newBlockData);
+
+      const newBlock = await blockService.addBlock(userId, newBlockData);
       res.json(newBlock);
     } catch (error) {
       console.error('Error creating a new block:', error);
-      res.status(500).json({ error: 'Erro ao criar um novo bloco' });
+      res.status(500).json({ error: 'Error creating a new block(controller)' });
     }
   }
-  
   
 }
 
