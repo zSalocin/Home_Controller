@@ -1,5 +1,7 @@
-import Element from '../Models/element_model';
+import { Element } from '../Models/element_model';
 import Block from '../Models/blocks_model';
+
+// Falta TESTAR
 
 export async function addElement(userId: string, blockId: string, newElementData: any) {
   try {
@@ -9,7 +11,7 @@ export async function addElement(userId: string, blockId: string, newElementData
       throw new Error('Block not found for the user.');
     }
 
-    const newElement = new Element({ ...newElementData });
+    const newElement = new Element(newElementData); // Pass the data directly
     block.element.push(newElement);
     await block.save();
 
@@ -40,3 +42,19 @@ export async function getElement(userId: string, blockId: string, elementId: str
     throw new Error('Error getting element');
   }
 }
+
+export async function getAllElements(blockId: string) {
+  try {
+    const block = await Block.findById(blockId);
+
+    if (!block) {
+      throw new Error('Block not found.');
+    }
+
+    return block.element;
+  } catch (error) {
+    console.error('Error getting all elements:', error);
+    throw new Error('Error getting all elements');
+  }
+}
+

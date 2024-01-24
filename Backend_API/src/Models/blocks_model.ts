@@ -1,16 +1,7 @@
 import mongoose from 'mongoose';
-import elementSchema from './element_model';
-
-const requestSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  pin: { type: Number, required: true },
-  stats: { type: Boolean, required: true },
-});
-
-const roomSchema = new mongoose.Schema({
-  roomName: { type: String, required: true }
-});
-
+import {elementSchema} from './element_model';
+import {roomSchema} from './room_model';
+import {requestSchema} from './request_model';
 
 const blockSchema = new mongoose.Schema({
     userId: { type: String, required: true },

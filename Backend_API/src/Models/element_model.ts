@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const elementSchema = new mongoose.Schema({
+export const elementSchema = new mongoose.Schema({
     enable: { type: Boolean, required: true },
     stats: { type: Boolean, required: true },
     pin: { type: Number, required: true },
@@ -10,6 +10,4 @@ const elementSchema = new mongoose.Schema({
     attachPins: [Number] // Somente se elementType contiver 'sensor'
   });
 
-  export const elementModel = mongoose.model('Block', elementSchema);
-
-  export default elementModel;
+  export const Element = mongoose.model('Element', elementSchema);

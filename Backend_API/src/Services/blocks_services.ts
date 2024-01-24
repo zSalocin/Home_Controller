@@ -17,30 +17,6 @@ class BlockService {
     }
   }
 
-  async getElementsInBlock(blockId: String) {
-    const block = await Block.findById(blockId);
-    return block ? block.element : null;
-  }
-
-  async getRoomsInBlock(blockId: String) {
-    const block = await Block.findById(blockId);
-    return block ? block.room : null;
-  }
-
-  async getRequestsInBlock(blockId: String) {
-    const block = await Block.findById(blockId);
-    return block ? block.requests : null;
-  }
-
-  async getSensorInBlock(blockId: String) {
-    const block = await Block.findById(blockId);
-    return block ? block.sensor : null;
-  }
-
-  async getElementsType(){
-    return this.ElementType;
-  }
-
   async addBlock(userId: string, newBlockData: any) {
     try {
       const existingBlock = await Block.findOne({ name: newBlockData.name, userId });

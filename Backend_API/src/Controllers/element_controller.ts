@@ -41,3 +41,15 @@ export async function getElement(req: AuthenticatedRequest, res: Response) {
     res.status(500).json({ error: 'Error getting element' });
   }
 }
+
+export async function getAllElements(req: Request, res: Response) {
+  const blockId = req.params.blockId;
+
+  try {
+    const elements = await elementService.getAllElements(blockId);
+    res.json(elements);
+  } catch (error) {
+    console.error('Error getting all elements:', error);
+    res.status(500).json({ error: 'Error getting all elements' });
+  }
+}

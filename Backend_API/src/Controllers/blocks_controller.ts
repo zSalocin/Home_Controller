@@ -19,36 +19,6 @@ class BlockController {
     }
   }
 
-
-  async getElementsInBlock(req: Request, res: Response) {
-    const blockId = req.params.blockId;
-    try {
-      const elements = await blockService.getElementsInBlock(blockId);
-      res.json(elements);
-    } catch (error) {
-      res.status(500).json({ error: 'Erro ao buscar elementos no bloco' });
-    }
-  }
-
-  async getRoomsInBlock(req: Request, res: Response) {
-    const blockId = req.params.blockId;
-    try {
-      const rooms = await blockService.getRoomsInBlock(blockId);
-      res.json(rooms);
-    } catch (error) {
-      res.status(500).json({ error: 'Erro ao buscar salas no bloco' });
-    }
-  }
-
-  async getElements(req: Request, res: Response) {
-    try {
-      const elementType = await blockService.getElementsType();
-      res.json(elementType);
-    } catch (error) {
-      res.status(500).json({ error: 'Erro ao buscar os tipos de elementos' });
-    }
-  }
-
   async addBlock(req: AuthenticatedRequest, res: Response) {
     const userId = req.user?.userId;
     const newBlockData = req.body;
