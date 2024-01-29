@@ -3,12 +3,8 @@ import rootUser from '../Models/users';
 
 class BlockService {
 
-  ElementType = ['sensor', 'arcondicionado', 'outro_tipo'];
-
   async getAllBlocks(userId: string): Promise<any[]> {
     try {
-      // Assuming user authentication is handled, and you have the user's ID
-      // You can use the user's ID to filter blocks if needed
       const blocks = await Block.find({ userId });
       return blocks;
     } catch (error) {

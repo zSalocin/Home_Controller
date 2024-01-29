@@ -12,10 +12,11 @@ app.use((req, res, next) => {
     next();
   });
 
-app.use(cors({
+  app.use(cors({
     origin: '*',
-    allowedHeaders: 'X-Requested-With, Content-Type, auth-token',
+    allowedHeaders: ['X-Requested-With', 'Content-Type', 'auth-token', 'Authorization'],
 }));
+
 
 app.use(express.json());
 app.use('/auth', authRoutes);

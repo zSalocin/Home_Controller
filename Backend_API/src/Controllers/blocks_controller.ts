@@ -9,7 +9,7 @@ class BlockController {
       const userId = req.user?.userId;
 
       if (!userId) {
-        return res.status(401).json({ error: 'User not authenticated' });
+        return res.status(401).json({ error: 'User not authenticated'});
       }
 
       const blocks = await blockService.getAllBlocks(userId);

@@ -1,72 +1,133 @@
 class Block {
-  final String id;
-  final String name;
-  final List<dynamic> element;
+  String userId;
+  String name;
+  List<Element> elements;
+  List<Request> requests;
+  List<Room> rooms;
+  List<int> sensors;
 
-  Block({required this.id, required this.name, required this.element});
+  Block({
+    required this.userId,
+    required this.name,
+    required this.elements,
+    required this.requests,
+    required this.rooms,
+    required this.sensors,
+  });
 
   factory Block.fromJson(Map<String, dynamic> json) {
     return Block(
-      id: json['_id'] as String,
-      name: json['name'] as String,
-      element: json['element'] as List<dynamic>,
+      userId: json['userId'],
+      name: json['name'],
+      elements: List<Element>.from(
+          json['element'].map((element) => Element.fromJson(element))),
+      requests: List<Request>.from(
+          json['requests'].map((request) => Request.fromJson(request))),
+      rooms: List<Room>.from(json['room'].map((room) => Room.fromJson(room))),
+      sensors: List<int>.from(json['sensor']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'name': name,
+      'element': elements.map((element) => element.toJson()).toList(),
+      'requests': requests.map((request) => request.toJson()).toList(),
+      'room': rooms.map((room) => room.toJson()).toList(),
+      'sensor': sensors,
+    };
   }
 }
 
-class Room {
-  final String name;
-
-  Room({required this.name});
-
-  factory Room.fromRTDB(Map<dynamic, dynamic> data) {
-    return Room(
-      name: data['name'] ?? 'sala secreta',
-    );
-  }
-}
-
-class Obj {
-  final String name;
-  final String room;
-  final String type;
-  final bool stats;
-  final int pin;
+class Element {
   bool enable;
+  bool stats;
+  int pin;
+  String elementName;
+  String elementRoom;
+  String elementType;
+  List<int> attachPins;
 
-  Obj({
-    required this.name,
-    required this.type,
-    required this.room,
+  Element({
+    required this.enable,
     required this.stats,
     required this.pin,
-    required this.enable,
+    required this.elementName,
+    required this.elementRoom,
+    required this.elementType,
+    required this.attachPins,
   });
 
-  factory Obj.fromRTDB(Map<dynamic, dynamic> data) {
-    return Obj(
-      name: data['name'] ?? 'nome oculto',
-      pin: data['pin'] ?? 0,
-      room: data['room'] ?? 'sala secreta',
-      type: data['type'] ?? 'typo indefinido',
-      enable: data['enable'] ?? false,
-      stats: data['stats'] ?? false,
+  factory Element.fromJson(Map<String, dynamic> json) {
+    return Element(
+      enable: json['enable'],
+      stats: json['stats'],
+      pin: json['pin'],
+      elementName: json['elementName'],
+      elementRoom: json['elementRoom'],
+      elementType: json['elementType'],
+      attachPins: List<int>.from(json['attachPins']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'enable': enable,
+      'stats': stats,
+      'pin': pin,
+      'elementName': elementName,
+      'elementRoom': elementRoom,
+      'elementType': elementType,
+      'attachPins': attachPins,
+    };
   }
 }
 
 class Request {
-  final String name;
-  final int pin;
-  final bool state;
+  String name;
+  int pin;
+  bool stats;
 
-  Request({required this.name, required this.pin, required this.state});
+  Request({
+    required this.name,
+    required this.pin,
+    required this.stats,
+  });
 
-  factory Request.fromRTDB(Map<dynamic, dynamic> data) {
+  factory Request.fromJson(Map<String, dynamic> json) {
     return Request(
-      name: data['name'] ?? 'unnow name',
-      pin: data['pin'] ?? 0,
-      state: data['state'] ?? false,
+      name: json['name'],
+      pin: json['pin'],
+      stats: json['stats'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'pin': pin,
+      'stats': stats,
+    };
+  }
+}
+
+class Room {
+  String roomName;
+
+  Room({
+    required this.roomName,
+  });
+
+  factory Room.fromJson(Map<String, dynamic> json) {
+    return Room(
+      roomName: json['roomName'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'roomName': roomName,
+    };
   }
 }

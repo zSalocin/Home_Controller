@@ -24,10 +24,6 @@ export async function addRoom(userId: string, blockId: string, newRoomData: any)
   
   export async function getRoom(userId: string, blockId: string, roomId: string) {
     try {
-      if (!userId) {
-        throw new Error('User ID is required.');
-      }
-  
       const block = await Block.findOne({ _id: blockId, userId });
   
       if (!block) {
@@ -49,9 +45,6 @@ export async function addRoom(userId: string, blockId: string, newRoomData: any)
   
 export async function getAllRooms(userId: string, blockId: string) {
   try {
-    if (!userId) {
-      throw new Error('User ID is required.');
-    }
 
     const block = await Block.findOne({ _id: blockId, userId });
 

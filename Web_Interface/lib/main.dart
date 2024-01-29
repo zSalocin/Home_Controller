@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'interface_page_blocks.dart';
-import 'firebase_options.dart';
-import 'components.dart';
+import 'package:tcc_2023/components.dart';
+import 'package:tcc_2023/interface_page_blocks.dart';
 import 'backend_services.dart';
 
 void main() {
@@ -27,40 +25,22 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.error != null) {
-              return Scaffold(
-                body: Center(
-                  child: wdialogBox(
-                    context,
-                    'Error',
-                    snapshot.error.toString(),
-                  ),
-                ),
-              );
-            } else {
-              return const HomePage();
-            }
-          } else {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-        },
-      ),
+      home: const HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String password = "";
+
+  String username = "";
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +78,13 @@ class HomePage extends StatelessWidget {
                               border: OutlineInputBorder(),
                               labelText: 'User Name',
                             ),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please enter a user name';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) => username = value!,
                           ),
                           const SizedBox(
                               height: 20), // Add some spacing between fields
@@ -107,22 +94,52 @@ class HomePage extends StatelessWidget {
                               labelText: 'Password',
                             ),
                             obscureText: true,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please enter a password';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) => password = value!,
                           ),
                           const SizedBox(
                               height: 20), // Add some spacing between fields
-                          ElevatedButton(
-                            onPressed: () {
-                              checkConnectivity();
-                              fetchBlocks();
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => const INTERFACE(),
-                              //   ),
-                              // );
-                            },
-                            child: const Text("Entry"),
-                          )
+                          Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () async {
+                                  if (formKey.currentState!.validate()) {
+                                    formKey.currentState!.save();
+                                    String? token =
+                                        await getToken(username, password);
+                                    if (token != null) {
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => INTERFACE(
+                                            token: token,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      // ignore: use_build_context_synchronously
+                                      dialogBox(context, "error",
+                                          "Falha na autenticação");
+                                    }
+                                  }
+                                },
+                                child: const Text("Entry"),
+                              ),
+                              const SizedBox(width: 5),
+                              ElevatedButton(
+                                onPressed: () {
+                                  userRegister(context);
+                                },
+                                child: const Text("sing-in"),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
