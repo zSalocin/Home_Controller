@@ -1,5 +1,6 @@
 import { Room } from '../Models/room_model';
 import Block from '../Models/blocks_model';
+import blockService from './blocks_services';
 
 // Falta TESTAR
 
@@ -14,6 +15,8 @@ export async function addRoom(userId: string, blockId: string, newRoomData: any)
     const newRoom = new Room(newRoomData); // Pass the data directly
     block.room.push(newRoom); // Assuming 'room' is the correct array field in the block schema
     await block.save();
+
+    await blockService.addRoomNumber(blockId);
 
     return newRoom;
   } catch (error) {

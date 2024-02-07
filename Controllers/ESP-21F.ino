@@ -1,15 +1,14 @@
 #include <ESP8266WiFi.h>
-#include <FirebaseESP8266.h>
 #include <ArduinoJson.h>
 
 #define BLOCK_NAME "Bloco 1"
+#define BLOCK_PASS ""
 
-#define REQUEST_PATH "Blocos/" + String(BLOCK_NAME) + "/Request"
-#define ELEMENT_PATH "Blocos/" + String(BLOCK_NAME) + "/Elements"
-#define SENSOR_PATH  "Blocos/" + String(BLOCK_NAME) + "aa"
+#define device_IP ""
 
-#define FIREBASE_HOST "FIREBASE_HOST"
-#define FIREBASE_AUTH "FIREBASE_AUTH" 
+#define REQUEST_PATH "http://" + String(DEVICE_IP) + "Blocos/" + String(BLOCK_NAME) + "/Request"
+
+#define ELEMENT_PATH "http://" + String(DEVICE_IP) + "/blocks/" + String(BLOCK_NAME) + "/allElements"
 
 #define WIFI_SSID "WIFI_SSID"
 #define WIFI_PASSWORD "WIFI_PASSWORD"

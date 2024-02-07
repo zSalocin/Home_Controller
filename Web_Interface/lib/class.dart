@@ -1,7 +1,9 @@
 class Block {
   String userId;
   String name;
-  List<Element> elements;
+  int roomNumber;
+  int elementNumber;
+  List<Obj> elements;
   List<Request> requests;
   List<Room> rooms;
   List<int> sensors;
@@ -9,6 +11,8 @@ class Block {
   Block({
     required this.userId,
     required this.name,
+    required this.roomNumber,
+    required this.elementNumber,
     required this.elements,
     required this.requests,
     required this.rooms,
@@ -19,8 +23,10 @@ class Block {
     return Block(
       userId: json['userId'],
       name: json['name'],
-      elements: List<Element>.from(
-          json['element'].map((element) => Element.fromJson(element))),
+      roomNumber: json['roomNumber'],
+      elementNumber: json['elementNumber'],
+      elements: List<Obj>.from(
+          json['element'].map((element) => Obj.fromJson(element))),
       requests: List<Request>.from(
           json['requests'].map((request) => Request.fromJson(request))),
       rooms: List<Room>.from(json['room'].map((room) => Room.fromJson(room))),
@@ -32,6 +38,8 @@ class Block {
     return {
       'userId': userId,
       'name': name,
+      'roomNumber': roomNumber,
+      'elementNumber': elementNumber,
       'element': elements.map((element) => element.toJson()).toList(),
       'requests': requests.map((request) => request.toJson()).toList(),
       'room': rooms.map((room) => room.toJson()).toList(),
@@ -40,7 +48,7 @@ class Block {
   }
 }
 
-class Element {
+class Obj {
   bool enable;
   bool stats;
   int pin;
@@ -49,7 +57,7 @@ class Element {
   String elementType;
   List<int> attachPins;
 
-  Element({
+  Obj({
     required this.enable,
     required this.stats,
     required this.pin,
@@ -59,8 +67,8 @@ class Element {
     required this.attachPins,
   });
 
-  factory Element.fromJson(Map<String, dynamic> json) {
-    return Element(
+  factory Obj.fromJson(Map<String, dynamic> json) {
+    return Obj(
       enable: json['enable'],
       stats: json['stats'],
       pin: json['pin'],
@@ -86,11 +94,13 @@ class Element {
 
 class Request {
   String name;
+  String time;
   int pin;
   bool stats;
 
   Request({
     required this.name,
+    required this.time,
     required this.pin,
     required this.stats,
   });
@@ -98,6 +108,7 @@ class Request {
   factory Request.fromJson(Map<String, dynamic> json) {
     return Request(
       name: json['name'],
+      time: json['time'],
       pin: json['pin'],
       stats: json['stats'],
     );
@@ -106,6 +117,7 @@ class Request {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
+      'time': time,
       'pin': pin,
       'stats': stats,
     };

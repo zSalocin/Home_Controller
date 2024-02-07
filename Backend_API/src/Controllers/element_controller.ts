@@ -24,21 +24,21 @@ export async function addElement(req: AuthenticatedRequest, res: Response) {
   }
 }
 
-export async function getElement(req: AuthenticatedRequest, res: Response) {
+export async function getElementsInRoom(req: AuthenticatedRequest, res: Response) {
   const userId = req.user?.userId;
   const blockId = req.params.blockId;
-  const elementId = req.params.elementId;
+  const roomName = req.params.roomName;
 
   if (!userId) {
     return res.status(401).json({ error: 'User not authenticated' });
   }
 
   try {
-    const element = await elementService.getElement(userId, blockId, elementId);
-    res.json(element);
+    const elementsInRoom = await elementService.getElementsInRoom(userId, blockId, roomName);
+    res.json(elementsInRoom);
   } catch (error) {
-    console.error('Error getting element:', error);
-    res.status(500).json({ error: 'Error getting element' });
+    console.error('Error getting elements in room:', error);
+    res.status(500).json({ error: 'Error getting elements in room' });
   }
 }
 

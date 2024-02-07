@@ -35,6 +35,40 @@ class BlockService {
       }
     }
   }
+
+  async addRoomNumber(blockId: string) {
+    try {
+      const block = await Block.findById(blockId);
+      if (!block) {
+        throw new Error('Block not found');
+      }
+      
+      block.roomNumber += 1;
+      await block.save();
+      
+      return block.roomNumber;
+    } catch (error) {
+      console.error('Error adding room number:', error);
+      throw new Error('Error adding room number');
+    }
+  }
+
+  async addelementNumber(blockId: string) {
+    try {
+      const block = await Block.findById(blockId);
+      if (!block) {
+        throw new Error('Block not found');
+      }
+      
+      block.elementNumber += 1;
+      await block.save();
+      
+      return block.elementNumber;
+    } catch (error) {
+      console.error('Error adding room number:', error);
+      throw new Error('Error adding room number');
+    }
+  }
 } 
 
 //TODO check the addBlock method, dosent working

@@ -6,6 +6,8 @@ import {requestSchema} from './request_model';
 const blockSchema = new mongoose.Schema({
     userId: { type: String, required: true },
     name: { type: String, required: true },
+    roomNumber: {type: Number, required: true, default: 0},
+    elementNumber: {type: Number, required: true, default: 0},
     element: [elementSchema],
     requests: [requestSchema],
     room: [roomSchema],

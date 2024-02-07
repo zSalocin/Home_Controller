@@ -2,6 +2,8 @@ import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 import 'package:tcc_2023/paths.dart';
 
+// User login settings
+
 Future<String> registerNewUser(String username, String password) async {
   try {
     var loginUrl = Uri.parse(ApiURL.authRegister);
@@ -46,6 +48,8 @@ Future<String?> getToken(String username, String password) async {
     return null;
   }
 }
+
+// Blocks settings
 
 Future<String> addBlock(String token, String blockName) async {
   try {
@@ -96,32 +100,183 @@ Future<List<Map<String, dynamic>>> getBlocks(String token) async {
   }
 }
 
-Future<List<String>> getRooms(String token, String blockName) async {
-  try {
-    final url = Uri.parse('${ApiURL.getBlocks}$blockName/rooms');
+// Rooms Settings
 
-    var jsonData =
-        convert.jsonEncode({'Authorization': token, 'blockId': blockName});
+Future<String> addRooms(String token, String blockName, String roomName) async {
+  try {
+    var url = Uri.parse('/add/$blockName/rooms');
+
+    var jsonData = convert.jsonEncode({'roomName': roomName});
 
     var response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
       body: jsonData,
     );
 
     if (response.statusCode == 200) {
-      // Parse the response data
-      final List<dynamic> responseData = convert.json.decode(response.body);
-      // Convert the response data to a List<String>
-      final List<String> rooms = responseData.cast<String>();
-      return rooms;
+      return 'Register new block successfully';
     } else {
-      // Handle error cases
-      throw Exception('Failed to load rooms');
+      print('Response body: ${response.body}');
+      return 'Registration failed with status: ${response.statusCode}.';
     }
   } catch (error) {
-    // Handle exceptions
-    print('Error: $error');
-    throw Exception('Failed to load rooms');
+    return 'Error during registration request: $error';
   }
 }
+
+Future<List<Map<String, dynamic>>> getRooms(
+    String token, String blockName) async {
+  try {
+    var url = Uri.parse('${ApiURL.getBlocks}$blockName/allRooms');
+
+    var response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
+
+    print(convert.jsonDecode(response.body));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = convert.json.decode(response.body);
+      List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(data);
+      print(items);
+      return items;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  } catch (error) {
+    throw Exception('Error: $error');
+  }
+}
+
+// Element settings
+
+Future<String> addElement(
+    {required String token,
+    required String blockName,
+    required String roomName,
+    required bool enable,
+    required bool stats,
+    required int pin,
+    required String elementName,
+    required String elementType,
+    List<int>? attachPins}) async {
+  try {
+    var url = Uri.parse('/add/$blockName/elements');
+
+    var jsonData = convert.jsonEncode({
+      'enable': enable,
+      'stats': stats,
+      'pin': pin,
+      'elementName': elementName,
+      'elementRoom': roomName,
+      'elementType': elementType,
+      'attachPins': attachPins
+    });
+
+    var response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonData,
+    );
+
+    if (response.statusCode == 200) {
+      return 'Register new block successfully';
+    } else {
+      print('Response body: ${response.body}');
+      return 'Registration failed with status: ${response.statusCode}.';
+    }
+  } catch (error) {
+    return 'Error during registration request: $error';
+  }
+}
+
+Future<List<Map<String, dynamic>>> getElements(
+    String token, String blockName) async {
+  try {
+    final url = Uri.parse('${ApiURL.getBlocks}$blockName/allElements');
+
+    var response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
+
+    print(convert.jsonDecode(response.body));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = convert.json.decode(response.body);
+      List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(data);
+      print(items);
+      return items;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  } catch (error) {
+    throw Exception('Error: $error');
+  }
+}
+
+Future<List<Map<String, dynamic>>> getElementsforRoom(
+    String token, String blockName, String roomName) async {
+  try {
+    final url =
+        Uri.parse('${ApiURL.getBlocks}$blockName/rooms/$roomName/elements');
+
+    var response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
+
+    print(convert.jsonDecode(response.body));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = convert.json.decode(response.body);
+      List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(data);
+      print(items);
+      return items;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  } catch (error) {
+    throw Exception('Error: $error');
+  }
+}
+
+// Requests settings
+Future<String> addRequest(String token, String blockName, String requestName,
+    String time, int pin, bool stats) async {
+  try {
+    var url = Uri.parse('/add/$blockName/requests');
+
+    var jsonData = convert.jsonEncode({
+      'name': requestName,
+      'time': time,
+      'pin': pin,
+      'stats': stats,
+    });
+
+    var response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonData,
+    );
+
+    if (response.statusCode == 200) {
+      return 'Register new request successfully';
+    } else {
+      print('Response body: ${response.body}');
+      return 'Registration failed with status: ${response.statusCode}.';
+    }
+  } catch (error) {
+    return 'Error during registration request: $error';
+  }
+}
+
+// TODO return only elements if they are in a room

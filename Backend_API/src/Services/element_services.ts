@@ -1,5 +1,6 @@
 import { Element } from '../Models/element_model';
 import Block from '../Models/blocks_model';
+import blockService from './blocks_services';
 
 // Falta TESTAR
 
@@ -15,6 +16,8 @@ export async function addElement(userId: string, blockId: string, newElementData
     block.element.push(newElement);
     await block.save();
 
+    await blockService.addelementNumber(blockId);
+
     return newElement;
   } catch (error) {
     console.error('Error adding a new element:', error);
@@ -22,7 +25,7 @@ export async function addElement(userId: string, blockId: string, newElementData
   }
 }
 
-export async function getElement(userId: string, blockId: string, elementId: string) {
+export async function getElementsInRoom(userId: string, blockId: string, roomName: string) {
   try {
     const block = await Block.findOne({ _id: blockId, userId });
 
@@ -30,19 +33,13 @@ export async function getElement(userId: string, blockId: string, elementId: str
       throw new Error('Block not found for the user.');
     }
 
-    const element = block.element.id(elementId);
-
-    if (!element) {
-      throw new Error('Element not found in the block.');
-    }
-
-    return element;
+    const elementsInRoom = block.element.filter(element => element.elementRoom === roomName);
+    return elementsInRoom;
   } catch (error) {
-    console.error('Error getting element:', error);
-    throw new Error('Error getting element');
+    console.error('Error getting elements in room:', error);
+    throw new Error('Error getting elements in room');
   }
 }
-
 export async function getAllElements(blockId: string) {
   try {
     const block = await Block.findById(blockId);
