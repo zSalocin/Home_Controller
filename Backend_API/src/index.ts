@@ -4,6 +4,7 @@ import cors from 'cors';
 import mongoose, { mongo } from 'mongoose';
 import blockRoutes from './Routers/blocks_router';
 import authRoutes from './Routers/auth_routes';
+import publicRoutes from './Routers/public_routes';
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.use((req, res, next) => {
 
 
 app.use(express.json());
+
+app.use('/public', publicRoutes);
 app.use('/auth', authRoutes);
 app.use('/blocks', blockRoutes);
 
@@ -40,9 +43,6 @@ async function connectToMongo() {
 
         console.log('Connected to MongoDB');
 
-        // Your code to interact with the database goes here
-
-        // For example, define your MongoDB models, routes, middleware, etc.
 
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
@@ -61,6 +61,3 @@ async function connectToMongo() {
 }
 
 connectToMongo();
-
-
-//TODO MAKE ROUTES FOR ELEMENT ADD AND ELEMENT GET

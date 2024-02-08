@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tcc_2023/backend_services.dart';
 import 'package:tcc_2023/components.dart';
 import 'package:tcc_2023/class.dart';
-import 'interface_configpage_blocks.dart';
 
 class RoomPage extends StatefulWidget {
   final String roomName;

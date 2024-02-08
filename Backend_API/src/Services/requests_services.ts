@@ -11,6 +11,12 @@ export async function addRequest(userId: string, blockId: string, newRequestdata
       throw new Error('Block not found for the user.');
     }
 
+    const existingPin = block.requests.find(requests => requests.pin === newRequestdata.pin);
+    
+    if (existingPin) {
+      throw new Error('A request with the same pin already exists in this block.');
+    }
+
     const newRequest = new Request(newRequestdata); // Pass the data directly
     block.requests.push(newRequest);
     await block.save();
@@ -49,7 +55,7 @@ export async function getAllRequests(blockId: string) {
       throw new Error('Block not found.');
     }
 
-    return block.element;
+    return block.requests;
   } catch (error) {
     console.error('Error getting all elements:', error);
     throw new Error('Error getting all elements');

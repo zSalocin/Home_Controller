@@ -36,7 +36,11 @@ class BlockController {
       res.json(newBlock);
     } catch (error) {
       console.error('Error creating a new block:', error);
-      res.status(500).json({ error: 'Error creating a new block(controller)' });
+      if (error instanceof Error && error.message.includes('A block with the same name already exists for this user.')) {
+        return res.status(402).json({ error: 'Cannot add blocks with the same name for this user.' });
+      } else {
+        res.status(500).json({ error: 'Error creating a new block' });
+      }
     }
   }
   

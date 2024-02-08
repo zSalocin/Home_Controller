@@ -36,6 +36,7 @@ class Block {
 }
 
 class Obj {
+  String id;
   bool enable;
   bool stats;
   int pin;
@@ -45,6 +46,7 @@ class Obj {
   List<int> attachPins;
 
   Obj({
+    required this.id,
     required this.enable,
     required this.stats,
     required this.pin,
@@ -56,6 +58,7 @@ class Obj {
 
   factory Obj.fromJson(Map<String, dynamic> json) {
     return Obj(
+      id: json['_id'],
       enable: json['enable'],
       stats: json['stats'],
       pin: json['pin'],
@@ -68,6 +71,7 @@ class Obj {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'enable': enable,
       'stats': stats,
       'pin': pin,

@@ -197,10 +197,42 @@ Future<String> addElement(
   }
 }
 
+Future<String> addAttachtoElement({
+  required String token,
+  required String blockId,
+  required String elementId,
+  required int attachPin,
+}) async {
+  try {
+    var url =
+        Uri.parse('${ApiURL.baseURL}/blocks/add/$blockId/elements/$elementId');
+
+    var jsonData = convert.jsonEncode({'attachPin': attachPin});
+
+    var response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonData,
+    );
+
+    if (response.statusCode == 200) {
+      return 'Register new attach successfully';
+    } else {
+      print('Response body: ${response.body}');
+      return 'Registration failed with status: ${response.statusCode}.';
+    }
+  } catch (error) {
+    return 'Error during registration request: $error';
+  }
+}
+
 Future<List<Map<String, dynamic>>> getElements(
     String token, String blockId) async {
   try {
-    final url = Uri.parse('${ApiURL.getBlocks}/$blockId/allElements');
+    final url = Uri.parse('${ApiURL.baseURL}/public/get/$blockId/allElements');
 
     var response = await http.get(url, headers: {
       'Authorization': 'Bearer $token',

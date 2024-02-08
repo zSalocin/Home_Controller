@@ -41,7 +41,19 @@ export async function getRequestInTime(req: Request, res: Response) {
   }
 }
 
-export async function deleteRequestByNameController(req: Request, res: Response) {
+export async function getallRequest(req: Request, res: Response) {
+  const blockId = req.params.blockId;
+
+  try {
+    const requests = await requestService.getAllRequests(blockId);
+    res.json(requests);
+  } catch (error) {
+    console.error('Error getting requests', error);
+    res.status(500).json({ error: 'Error getting requests' });
+  }
+}
+
+export async function deleteRequestByName(req: Request, res: Response) {
   const blockId = req.params.blockId;
   const requestName = req.params.requestName;
 

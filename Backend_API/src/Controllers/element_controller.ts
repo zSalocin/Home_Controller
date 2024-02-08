@@ -53,3 +53,26 @@ export async function getAllElements(req: Request, res: Response) {
     res.status(500).json({ error: 'Error getting all elements' });
   }
 }
+
+export async function addAttachPinToElement(req: AuthenticatedRequest, res: Response) {
+  const userId = req.user?.userId;
+  const blockId = req.params.blockId;
+  const elementId = req.params.elementId;
+  const attachPin = req.body.attachPin;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'User not authenticated' });
+  }
+
+  try {
+    if (!attachPin || isNaN(attachPin)) {
+      return res.status(400).json({ error: 'Invalid attach pin' });
+    }
+
+    const result = await elementService.addAttachPinToElement(userId, blockId, elementId, attachPin);
+    res.json(result);
+  } catch (error) {
+    console.error('Error adding attach pin to element:', error);
+    res.status(500).json({ error: 'Error adding attach pin to element' });
+  }
+}

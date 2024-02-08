@@ -83,13 +83,13 @@ class INTERFACEState extends State<INTERFACE> {
               children: <Widget>[
                 IconButton(
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) =>
-                    //         // BlockConfig(blockName: bloco.name),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BlockConfig(
+                            token: widget.token, blockId: bloco.blockId),
+                      ),
+                    );
                   },
                   icon: const Icon(Icons.settings),
                 ),

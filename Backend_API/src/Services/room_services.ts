@@ -12,6 +12,11 @@ export async function addRoom(userId: string, blockId: string, newRoomData: any)
     if (!block) {
       throw new Error('Block not found for the user.');
     }
+    const existingRoom = block.room.find(room => room.roomName === newRoomData.roomName);
+    
+    if (existingRoom) {
+      throw new Error('A room with the same name already exists in this block.');
+    }
 
     const newRoom = new Room(newRoomData); // Assuming 'newRoomData' has the required fields for creating a new room
     block.room.push(newRoom); // Assuming 'rooms' is the correct array field in the block schema
