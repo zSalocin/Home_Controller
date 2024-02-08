@@ -28,3 +28,39 @@ const blockId = req.params.blockId;
     res.status(500).json({ error: 'Error creating a new request' });
   }
 }
+
+export async function getRequestInTime(req: Request, res: Response) {
+  const blockId = req.params.blockId;
+
+  try {
+    const requests = await requestService.getRequestinTime(blockId);
+    res.json(requests);
+  } catch (error) {
+    console.error('Error getting requests in time:', error);
+    res.status(500).json({ error: 'Error getting requests in time' });
+  }
+}
+
+export async function deleteRequestByNameController(req: Request, res: Response) {
+  const blockId = req.params.blockId;
+  const requestName = req.params.requestName;
+
+  try {
+    await requestService.deleteRequestByName(blockId, requestName);
+    res.status(204).end();
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+}
+
+export async function deleteExecutedRequests(req: Request, res: Response) {
+  const blockId = req.params.blockId;
+
+  try {
+    await requestService.deleteExecutedRequests(blockId);
+    res.status(204).send(); // No Content response
+  } catch (error) {
+    console.error('Error deleting executed requests:', error);
+    res.status(500).json({ error: 'Error deleting executed requests' });
+  }
+}

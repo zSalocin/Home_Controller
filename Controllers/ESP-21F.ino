@@ -5,7 +5,9 @@
 
 #define device_IP ""
 
-#define REQUEST_PATH "http://" + String(DEVICE_IP) + "/blocks/get/" + String(BLOCO_ID) + "/Request"
+#define REQUEST_PATH "http://" + String(DEVICE_IP) + "/blocks/get/" + String(BLOCO_ID) + "/requests"
+
+#define DELETE_REQUEST_PATH "http://" + String(DEVICE_IP) + "/blocks/del/" + String(BLOCO_ID) + "/requests/"
 
 #define ELEMENT_PATH "http://" + String(DEVICE_IP) + "/blocks/get/" + String(BLOCO_ID) + "/allElements"
 
@@ -35,6 +37,23 @@ digitalWrite(LED_BUILTIN, HIGH);
 
 }
 
+void deleteRequest(String requestName) {
+  if (http.begin(client, DELETE_REQUEST_PATH + requestName)) {
+    int httpCode = http.DELETE();
+    
+    if (httpCode == HTTP_CODE_NO_CONTENT) {
+      Serial.println("Request deleted successfully");
+    } else {
+      Serial.print("HTTP DELETE request failed with error code ");
+      Serial.println(httpCode);
+    }
+
+    http.end();
+  } else {
+    Serial.println("Failed to connect to server");
+  }
+}
+
 void processRequests(String payload) {
   DynamicJsonDocument doc(1024);
   DeserializationError error = deserializeJson(doc, payload);
@@ -55,7 +74,7 @@ void processRequests(String payload) {
 
         // Se necessário, remova a requisição após ser executada
         // Exemplo de como remover a requisição:
-        // removeRequest(name);
+        deleteRequest(name);
       }
     } else {
       Serial.println("Invalid JSON format: not an array");
@@ -69,7 +88,7 @@ void processRequests(String payload) {
 void handleRequests() {
   Serial.println("Checking for requests...");
 
-  if (http.begin(client, "http://" + REQUEST_PATH)) {
+  if (http.begin(client, REQUEST_PATH)) {
     int httpCode = http.GET();
     
     if (httpCode == HTTP_CODE_OK) {
@@ -87,12 +106,11 @@ void handleRequests() {
 }
 
 void loop() {
-  handleRequests();
-
   digitalWrite(LED_BUILTIN, HIGH);
-  delay(10000);
+  delay(1000);
+  handleRequests();
   digitalWrite(LED_BUILTIN, LOW);
-  delay(10000);
+  delay(1000);
 }
 
 

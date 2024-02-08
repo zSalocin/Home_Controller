@@ -17,7 +17,7 @@ router.get('/get/:blockId/rooms/:roomName/elements', elementController.getElemen
 router.get('/get/:blockId/allElements', elementController.getAllElements);
 // router.get('/:blockId/elements/sensors', blockController.getSensorsInBlock);
 // router.get('/:blockId/elements/Actuators', blockActuators.getSensorsInBlock);
-// router.get('/:blockId/requests', blockController.getRequestsInBlock);
+router.get('/get/:blockId/requests', requestController.getRequestInTime);
 
 // router.get('/config/micro', blockController.getControllers); ver se tem como adicionar os microcontroles
 // router.get('/config/elements', blockController.getElements);
@@ -30,7 +30,7 @@ router.post('/add/:blockId/requests', requestController.addRequest);
 
 // router.delete('/delete/:blockId', blockController.removeBlock);
 // router.delete('/delete/:blockId/elements/:elementsId', blockController.removeElement);
-// router.delete('/delete/:blockId/requests/:requestId', blockController.removeRequests);
+router.delete('/del/:blockId/requests/:requestName', requestController.deleteRequestByNameController);
 // router.delete('/delete/:blockId/rooms/:roomsId', blockController.removeRoom);
 
 export default router;
