@@ -349,34 +349,6 @@ Future<void> roomCreate(
                         width: MediaQuery.of(context).size.width * 0.01,
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),
-                      if (blockName == null) ...[
-                        DropdownButtonFormField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'block name',
-                          ),
-                          items: item
-                              .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              } as DropdownMenuItem<String> Function(
-                                  Map<String, dynamic> e))
-                              .toList(),
-                          onChanged: (value) => selectedBlock = value!,
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Please select a block';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01,
-                          height: MediaQuery.of(context).size.height * 0.01,
-                        ),
-                      ],
                       ElevatedButton(
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {
@@ -552,7 +524,7 @@ Future<void> elementCreate(
                               'Notification',
                               await addElement(
                                 token: token,
-                                blockName: selectedBlock,
+                                blockId: selectedBlock,
                                 roomName: selectedRoom,
                                 elementName: elementName,
                                 elementType: selectedElement,

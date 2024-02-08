@@ -102,9 +102,9 @@ Future<List<Map<String, dynamic>>> getBlocks(String token) async {
 
 // Rooms Settings
 
-Future<String> addRooms(String token, String blockName, String roomName) async {
+Future<String> addRooms(String token, String blockId, String roomName) async {
   try {
-    var url = Uri.parse('/add/$blockName/rooms');
+    var url = Uri.parse('${ApiURL.baseURL}/blocks/add/$blockId/rooms');
 
     var jsonData = convert.jsonEncode({'roomName': roomName});
 
@@ -118,7 +118,7 @@ Future<String> addRooms(String token, String blockName, String roomName) async {
     );
 
     if (response.statusCode == 200) {
-      return 'Register new block successfully';
+      return 'Register new room successfully';
     } else {
       print('Response body: ${response.body}');
       return 'Registration failed with status: ${response.statusCode}.';
@@ -128,10 +128,9 @@ Future<String> addRooms(String token, String blockName, String roomName) async {
   }
 }
 
-Future<List<Map<String, dynamic>>> getRooms(
-    String token, String blockName) async {
+Future<List<String>> getRooms(String token, String blockId) async {
   try {
-    var url = Uri.parse('${ApiURL.getBlocks}$blockName/allRooms');
+    var url = Uri.parse('${ApiURL.getBlocks}/$blockId/allRooms');
 
     var response = await http.get(url, headers: {
       'Authorization': 'Bearer $token',
@@ -141,9 +140,10 @@ Future<List<Map<String, dynamic>>> getRooms(
 
     if (response.statusCode == 200) {
       List<dynamic> data = convert.json.decode(response.body);
-      List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(data);
-      print(items);
-      return items;
+      List<String> roomNames =
+          data.map((room) => room['roomName'] as String).toList();
+      print(roomNames);
+      return roomNames;
     } else {
       throw Exception('Failed to load data');
     }
@@ -156,7 +156,7 @@ Future<List<Map<String, dynamic>>> getRooms(
 
 Future<String> addElement(
     {required String token,
-    required String blockName,
+    required String blockId,
     required String roomName,
     required bool enable,
     required bool stats,
@@ -165,7 +165,7 @@ Future<String> addElement(
     required String elementType,
     List<int>? attachPins}) async {
   try {
-    var url = Uri.parse('/add/$blockName/elements');
+    var url = Uri.parse('${ApiURL.baseURL}/blocks/add/$blockId/elements');
 
     var jsonData = convert.jsonEncode({
       'enable': enable,
@@ -187,7 +187,7 @@ Future<String> addElement(
     );
 
     if (response.statusCode == 200) {
-      return 'Register new block successfully';
+      return 'Register new element successfully';
     } else {
       print('Response body: ${response.body}');
       return 'Registration failed with status: ${response.statusCode}.';
@@ -198,9 +198,9 @@ Future<String> addElement(
 }
 
 Future<List<Map<String, dynamic>>> getElements(
-    String token, String blockName) async {
+    String token, String blockId) async {
   try {
-    final url = Uri.parse('${ApiURL.getBlocks}$blockName/allElements');
+    final url = Uri.parse('${ApiURL.getBlocks}/$blockId/allElements');
 
     var response = await http.get(url, headers: {
       'Authorization': 'Bearer $token',
@@ -222,10 +222,10 @@ Future<List<Map<String, dynamic>>> getElements(
 }
 
 Future<List<Map<String, dynamic>>> getElementsforRoom(
-    String token, String blockName, String roomName) async {
+    String token, String blockId, String roomName) async {
   try {
     final url =
-        Uri.parse('${ApiURL.getBlocks}$blockName/rooms/$roomName/elements');
+        Uri.parse('${ApiURL.getBlocks}/$blockId/rooms/$roomName/elements');
 
     var response = await http.get(url, headers: {
       'Authorization': 'Bearer $token',
@@ -234,10 +234,16 @@ Future<List<Map<String, dynamic>>> getElementsforRoom(
     print(convert.jsonDecode(response.body));
 
     if (response.statusCode == 200) {
-      List<dynamic> data = convert.json.decode(response.body);
-      List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(data);
-      print(items);
-      return items;
+      List<dynamic>? data = convert.json.decode(response.body);
+      if (data != null) {
+        List<Map<String, dynamic>> items =
+            List<Map<String, dynamic>>.from(data);
+        print(items);
+        return items;
+      } else {
+        // Retorna uma lista vazia se não houver dados
+        return [];
+      }
     } else {
       throw Exception('Failed to load data');
     }
@@ -247,10 +253,10 @@ Future<List<Map<String, dynamic>>> getElementsforRoom(
 }
 
 // Requests settings
-Future<String> addRequest(String token, String blockName, String requestName,
+Future<String> addRequest(String token, String blockId, String requestName,
     String time, int pin, bool stats) async {
   try {
-    var url = Uri.parse('/add/$blockName/requests');
+    var url = Uri.parse('${ApiURL.baseURL}/blocks/add/$blockId/requests');
 
     var jsonData = convert.jsonEncode({
       'name': requestName,

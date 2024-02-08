@@ -1,49 +1,36 @@
 class Block {
+  String blockId;
   String userId;
   String name;
   int roomNumber;
   int elementNumber;
-  List<Obj> elements;
-  List<Request> requests;
-  List<Room> rooms;
-  List<int> sensors;
 
   Block({
+    required this.blockId,
     required this.userId,
     required this.name,
     required this.roomNumber,
     required this.elementNumber,
-    required this.elements,
-    required this.requests,
-    required this.rooms,
-    required this.sensors,
   });
 
   factory Block.fromJson(Map<String, dynamic> json) {
     return Block(
+      blockId: json['_id'],
       userId: json['userId'],
       name: json['name'],
-      roomNumber: json['roomNumber'],
-      elementNumber: json['elementNumber'],
-      elements: List<Obj>.from(
-          json['element'].map((element) => Obj.fromJson(element))),
-      requests: List<Request>.from(
-          json['requests'].map((request) => Request.fromJson(request))),
-      rooms: List<Room>.from(json['room'].map((room) => Room.fromJson(room))),
-      sensors: List<int>.from(json['sensor']),
+      roomNumber: json['roomNumber'] != null ? json['roomNumber'] as int : 0,
+      elementNumber:
+          json['elementNumber'] != null ? json['roomNumber'] as int : 0,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'blockId': blockId,
       'userId': userId,
       'name': name,
       'roomNumber': roomNumber,
       'elementNumber': elementNumber,
-      'element': elements.map((element) => element.toJson()).toList(),
-      'requests': requests.map((request) => request.toJson()).toList(),
-      'room': rooms.map((room) => room.toJson()).toList(),
-      'sensor': sensors,
     };
   }
 }
@@ -75,7 +62,7 @@ class Obj {
       elementName: json['elementName'],
       elementRoom: json['elementRoom'],
       elementType: json['elementType'],
-      attachPins: List<int>.from(json['attachPins']),
+      attachPins: List<int>.from(json['attachPins'] ?? []),
     );
   }
 

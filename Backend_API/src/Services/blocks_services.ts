@@ -5,7 +5,7 @@ class BlockService {
 
   async getAllBlocks(userId: string): Promise<any[]> {
     try {
-      const blocks = await Block.find({ userId });
+      const blocks = await Block.find({ userId }).select('userId name roomNumber elementNumber').lean();
       return blocks;
     } catch (error) {
       console.error('Error fetching all blocks:', error);

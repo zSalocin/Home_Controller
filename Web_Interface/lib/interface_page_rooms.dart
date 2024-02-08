@@ -6,13 +6,13 @@ import 'interface_configpage_blocks.dart';
 
 class RoomPage extends StatefulWidget {
   final String roomName;
-  final String blockName;
+  final String blockID;
   final String token;
 
   const RoomPage(
       {super.key,
       required this.roomName,
-      required this.blockName,
+      required this.blockID,
       required this.token});
 
   @override
@@ -30,10 +30,11 @@ class _RoomPageState extends State<RoomPage> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              // elementCreate(
-              //     context: context,
-              //     selectedBlock: widget.blockName,
-              //     roomName: widget.roomName);
+              elementCreate(
+                  context: context,
+                  token: widget.token,
+                  selectedBlock: widget.blockID,
+                  roomName: widget.roomName);
             },
           ),
           IconButton(
@@ -53,8 +54,8 @@ class _RoomPageState extends State<RoomPage> {
       body: Container(
         color: const Color.fromARGB(255, 68, 127, 175),
         child: FutureBuilder(
-          future: getElementsforRoom(
-              widget.token, widget.blockName, widget.roomName),
+          future:
+              getElementsforRoom(widget.token, widget.blockID, widget.roomName),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -64,19 +65,16 @@ class _RoomPageState extends State<RoomPage> {
               return Center(
                 child: elementCreateDialogBox(
                     context,
-                    'No Element Found',
-                    'Please add an Element 1',
                     widget.token,
-                    widget.blockName,
+                    'No Element Found',
+                    'Please add an Element',
+                    widget.blockID,
                     widget.roomName),
               );
             }
-            List item = [];
-            Map<String, dynamic> data = (snapshot.data as Map<String, dynamic>);
-            data.forEach((index, data) => item.add({'key': index, ...data}));
-            item = item
-                .where((element) => element['room'] == widget.roomName)
-                .toList();
+
+            List<Map<String, dynamic>> item = snapshot.data!;
+
             return ListView.builder(
               itemCount: item.length,
               itemBuilder: (BuildContext context, int index) =>
@@ -126,8 +124,16 @@ class _RoomPageState extends State<RoomPage> {
                 ),
               ),
               onPressed: () async {
-                addRequest(widget.token, widget.blockName, element.elementName,
-                    '-1', element.pin, !element.stats);
+                dialogBox(
+                    context,
+                    'Notification',
+                    await addRequest(
+                        widget.token,
+                        widget.blockID,
+                        element.elementName,
+                        '-1',
+                        element.pin,
+                        !element.stats));
               },
               // } else {
               //   // ignore: use_build_context_synchronously

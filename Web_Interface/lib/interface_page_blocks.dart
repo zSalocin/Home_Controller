@@ -95,7 +95,10 @@ class INTERFACEState extends State<INTERFACE> {
                 ),
                 IconButton(
                   onPressed: () {
-                    // roomCreate(context: context, blockName: bloco.name);
+                    roomCreate(
+                        context: context,
+                        token: widget.token,
+                        blockName: bloco.blockId);
                   },
                   icon: const Icon(Icons.add),
                 ),
@@ -105,7 +108,7 @@ class INTERFACEState extends State<INTERFACE> {
         ),
         children: <Widget>[
           FutureBuilder(
-            future: getRooms(widget.token, bloco.name),
+            future: getRooms(widget.token, bloco.blockId),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List<String> rooms = snapshot.data as List<String>;
@@ -155,14 +158,16 @@ class INTERFACEState extends State<INTERFACE> {
                               IconButton(
                                 icon: const Icon(Icons.arrow_forward),
                                 onPressed: () {
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => RoomPage(
-                                  //         roomName: rooms[index],
-                                  //         blockName: bloco.name),
-                                  //   ),
-                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RoomPage(
+                                        roomName: rooms[index],
+                                        blockID: bloco.blockId,
+                                        token: widget.token,
+                                      ),
+                                    ),
+                                  );
                                 },
                               ),
                             ],

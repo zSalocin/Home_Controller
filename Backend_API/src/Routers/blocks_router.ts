@@ -11,10 +11,10 @@ const router = express.Router();
 router.use(authenticateUser);
 
 router.get('/get', blockController.getAllBlocks);
-router.get('/:blockId/Rooms', roomController.getRoom);
-router.get('/:blockId/allRooms', roomController.getAllRooms);
-router.get('/:blockId/rooms/:roomName/elements', elementController.getElementsInRoom);
-router.get('/:blockId/allElements', elementController.getAllElements);
+router.get('/get/:blockId/Rooms', roomController.getRoom);
+router.get('/get/:blockId/allRooms', roomController.getAllRooms);
+router.get('/get/:blockId/rooms/:roomName/elements', elementController.getElementsInRoom);
+router.get('/get/:blockId/allElements', elementController.getAllElements);
 // router.get('/:blockId/elements/sensors', blockController.getSensorsInBlock);
 // router.get('/:blockId/elements/Actuators', blockActuators.getSensorsInBlock);
 // router.get('/:blockId/requests', blockController.getRequestsInBlock);
