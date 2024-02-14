@@ -2,7 +2,39 @@ import { Element } from '../Models/element_model';
 import Block from '../Models/blocks_model';
 import blockService from './blocks_services';
 
-// Falta TESTAR
+// Get Methods
+
+export async function getElementsInRoom(userId: string, blockId: string, roomName: string) {
+  try {
+    const block = await Block.findOne({ _id: blockId, userId });
+
+    if (!block) {
+      throw new Error('Block not found for the user.');
+    }
+
+    const elementsInRoom = block.element.filter(element => element.elementRoom === roomName);
+    return elementsInRoom;
+  } catch (error) {
+    console.error('Error getting elements in room:', error);
+    throw new Error('Error getting elements in room');
+  }
+}
+export async function getAllElements(blockId: string) {
+  try {
+    const block = await Block.findById(blockId);
+
+    if (!block) {
+      throw new Error('Block not found.');
+    }
+
+    return block.element;
+  } catch (error) {
+    console.error('Error getting all elements:', error);
+    throw new Error('Error getting all elements');
+  }
+}
+
+// Set methods
 
 export async function addElement(userId: string, blockId: string, newElementData: any) {
   try {
@@ -37,36 +69,6 @@ export async function addElement(userId: string, blockId: string, newElementData
   }
 }
 
-export async function getElementsInRoom(userId: string, blockId: string, roomName: string) {
-  try {
-    const block = await Block.findOne({ _id: blockId, userId });
-
-    if (!block) {
-      throw new Error('Block not found for the user.');
-    }
-
-    const elementsInRoom = block.element.filter(element => element.elementRoom === roomName);
-    return elementsInRoom;
-  } catch (error) {
-    console.error('Error getting elements in room:', error);
-    throw new Error('Error getting elements in room');
-  }
-}
-export async function getAllElements(blockId: string) {
-  try {
-    const block = await Block.findById(blockId);
-
-    if (!block) {
-      throw new Error('Block not found.');
-    }
-
-    return block.element;
-  } catch (error) {
-    console.error('Error getting all elements:', error);
-    throw new Error('Error getting all elements');
-  }
-}
-
 export async function addAttachPinToElement(userId: string, blockId: string, elementId: string, attachPin: number) {
   try {
     const block = await Block.findOne({ _id: blockId, userId });
@@ -90,3 +92,7 @@ export async function addAttachPinToElement(userId: string, blockId: string, ele
     throw new Error('Error adding attach pin to element');
   }
 }
+
+// Update Methods
+
+// Delete Methods

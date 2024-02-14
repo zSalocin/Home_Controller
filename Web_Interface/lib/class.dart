@@ -116,20 +116,24 @@ class Request {
 }
 
 class Room {
+  String id;
   String roomName;
 
   Room({
+    required this.id,
     required this.roomName,
   });
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
+      id: json['_id'],
       roomName: json['roomName'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'roomName': roomName,
     };
   }

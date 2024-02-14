@@ -1,0 +1,21 @@
+{
+    "microcontrollers": [
+      {
+        "controllername": "Arduino Uno",
+        "controllerpins": [1, 2, 3, 4, 5, 6]
+      },
+      {
+        "controllername": "Raspberry Pi",
+        "controllerpins": [11, 12, 13, 14, 15, 16]
+      },
+      {
+        "controllername": "ESP32",
+        "controllerpins": [21, 22, 23, 24, 25, 26]
+      },
+      {
+        "controllername": "ESP12",
+        "controllerpins": [21, 22, 23, 24, 25, 26]
+      }
+    ]
+  }
+  

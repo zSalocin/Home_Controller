@@ -4,6 +4,9 @@ import blockService from '../Services/blocks_services';
 import AuthenticatedRequest from '../Types/types';
 
 class BlockController {
+
+// Get Methods
+
   async getAllBlocks(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user?.userId;
@@ -18,6 +21,8 @@ class BlockController {
       res.status(500).json({ error: 'Error fetching blocks' });
     }
   }
+
+// Set Methods
 
   async addBlock(req: AuthenticatedRequest, res: Response) {
     const userId = req.user?.userId;
@@ -44,6 +49,10 @@ class BlockController {
     }
   }
   
+// Update Methods
+
+// Delete Methods
+
 }
 
 export default new BlockController();

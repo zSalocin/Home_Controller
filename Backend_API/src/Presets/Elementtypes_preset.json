@@ -1,0 +1,3 @@
+{
+    "validElementTypes": ["light", "air_conditioner", "Presence Sensor", "current_sensor"]
+  }

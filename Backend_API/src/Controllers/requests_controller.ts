@@ -2,6 +2,34 @@ import { Request, Response } from 'express';
 import * as requestService from '../Services/requests_services';
 import AuthenticatedRequest from '../Types/types';
 
+// Get Methods
+
+export async function getRequestInTime(req: Request, res: Response) {
+  const blockId = req.params.blockId;
+
+  try {
+    const requests = await requestService.getRequestinTime(blockId);
+    res.json(requests);
+  } catch (error) {
+    console.error('Error getting requests in time:', error);
+    res.status(500).json({ error: 'Error getting requests in time' });
+  }
+}
+
+export async function getallRequest(req: Request, res: Response) {
+  const blockId = req.params.blockId;
+
+  try {
+    const requests = await requestService.getAllRequests(blockId);
+    res.json(requests);
+  } catch (error) {
+    console.error('Error getting requests', error);
+    res.status(500).json({ error: 'Error getting requests' });
+  }
+}
+
+// Set Methods
+
 export async function addRequest(req: AuthenticatedRequest, res: Response) {
 const blockId = req.params.blockId;
   const newRequestData = req.body;
@@ -29,29 +57,9 @@ const blockId = req.params.blockId;
   }
 }
 
-export async function getRequestInTime(req: Request, res: Response) {
-  const blockId = req.params.blockId;
+// Update Methods
 
-  try {
-    const requests = await requestService.getRequestinTime(blockId);
-    res.json(requests);
-  } catch (error) {
-    console.error('Error getting requests in time:', error);
-    res.status(500).json({ error: 'Error getting requests in time' });
-  }
-}
-
-export async function getallRequest(req: Request, res: Response) {
-  const blockId = req.params.blockId;
-
-  try {
-    const requests = await requestService.getAllRequests(blockId);
-    res.json(requests);
-  } catch (error) {
-    console.error('Error getting requests', error);
-    res.status(500).json({ error: 'Error getting requests' });
-  }
-}
+// Delete Methods
 
 export async function deleteRequestByName(req: Request, res: Response) {
   const blockId = req.params.blockId;

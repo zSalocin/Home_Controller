@@ -45,7 +45,7 @@ class INTERFACEState extends State<INTERFACE> {
         ],
       ),
       body: Container(
-        color: Colors.blue,
+        color: const Color.fromARGB(255, 20, 94, 155),
         child: FutureBuilder(
           future: getBlocks(widget.token),
           builder:
@@ -86,8 +86,8 @@ class INTERFACEState extends State<INTERFACE> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BlockConfig(
-                            token: widget.token, blockId: bloco.blockId),
+                        builder: (context) =>
+                            BlockConfig(token: widget.token, block: bloco),
                       ),
                     );
                   },
@@ -130,7 +130,7 @@ class INTERFACEState extends State<INTERFACE> {
                     },
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
-                        color: Colors.orange,
+                        color: const Color.fromARGB(255, 122, 158, 108),
                         child: Padding(
                           padding: const EdgeInsets.all(14.0),
                           child: Row(
@@ -140,19 +140,6 @@ class INTERFACEState extends State<INTERFACE> {
                                 style: const TextStyle(
                                   fontSize: 18.0,
                                 ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  // Do something when edit button is pressed
-                                },
-                                icon:
-                                    const Icon(Icons.lightbulb_circle_outlined),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  // Do something when delete button is pressed
-                                },
-                                icon: const Icon(Icons.ac_unit_outlined),
                               ),
                               const Spacer(),
                               IconButton(
@@ -186,15 +173,15 @@ class INTERFACEState extends State<INTERFACE> {
               }
             },
           ),
-          const Card(
-            margin: EdgeInsets.all(0),
+          Card(
+            margin: const EdgeInsets.all(0),
             color: Colors.transparent,
             child: ListTile(
               title: Text(
-                'Total de Salas:',
+                'Total de Salas: ${bloco.roomNumber}',
               ),
               subtitle: Text(
-                'Total de elementos: ',
+                'Total de elementos: ${bloco.elementNumber}',
               ),
             ),
           ),
@@ -212,10 +199,6 @@ class INTERFACEState extends State<INTERFACE> {
 
 //TODO adiconar erro caso ao aceder ou apagar todos elementos dentro de um bloco e sala, caso nao haja nenhum elemento
 
-//TODO adicionar contador para salas e elementos no bloco
-
 //TODO adicionar um check para verificar se a algum elemento ativo no bloco e alterar icono conforme
-
-//TODO adicionar encase de erro caso nao encontre o firebase se possivel
 
 //TOO adicionar layout resposivel 

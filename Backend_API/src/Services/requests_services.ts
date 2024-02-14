@@ -1,7 +1,43 @@
 import { Request } from '../Models/request_model';
 import Block from '../Models/blocks_model';
 
-// Falta TESTAR
+// Get Methods
+
+export async function getAllRequests(blockId: string) {
+  // this should return all requests of the block
+try {
+  const block = await Block.findById(blockId);
+
+  if (!block) {
+    throw new Error('Block not found.');
+  }
+
+  return block.requests;
+} catch (error) {
+  console.error('Error getting all elements:', error);
+  throw new Error('Error getting all elements');
+}
+}
+
+// Current dosent work proprery
+export async function getRequestinTime(blockId: string) {
+  try {
+    const currentTime = new Date();
+    const requests = await Request.find({ time: { $lt: currentTime }, blockId });
+
+    return requests;
+  } catch (error) {
+    console.error('Error getting requests in time:', error);
+    throw new Error('Error getting requests in time');
+  }
+}
+
+
+ export async function getRequestByPin(pin: number, userId: string) {
+    return Request.findOne({ pin, userId });
+ }
+
+ // Set Methods
 
 export async function addRequest(userId: string, blockId: string, newRequestdata: any) {
   try {
@@ -28,39 +64,9 @@ export async function addRequest(userId: string, blockId: string, newRequestdata
   }
 }
 
-export async function getRequestinTime(blockId: string) {
-  try {
-    const currentTime = new Date();
-    const requests = await Request.find({ time: { $lt: currentTime }, blockId });
+// Update Methods
 
-    return requests;
-  } catch (error) {
-    console.error('Error getting requests in time:', error);
-    throw new Error('Error getting requests in time');
-  }
-}
-
-
- export async function getRequestByPin(pin: number, userId: string) {
-    return Request.findOne({ pin, userId });
- }
-
-
-export async function getAllRequests(blockId: string) {
-    // this should return all requests of the block
-  try {
-    const block = await Block.findById(blockId);
-
-    if (!block) {
-      throw new Error('Block not found.');
-    }
-
-    return block.requests;
-  } catch (error) {
-    console.error('Error getting all elements:', error);
-    throw new Error('Error getting all elements');
-  }
-}
+// Delete Methods
 
 export async function deleteRequestByName(blockId: string, requestName: string) {
   try {
@@ -85,7 +91,6 @@ export async function deleteRequestByName(blockId: string, requestName: string) 
     throw new Error('Error deleting request by name');
   }
 }
-
 
 export async function deleteExecutedRequests(blockId: string) {
   try {

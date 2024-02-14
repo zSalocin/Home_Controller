@@ -11,7 +11,6 @@ const blockSchema = new mongoose.Schema({
     element: [elementSchema],
     requests: [requestSchema],
     room: [roomSchema],
-    sensor: [{ type: Number }],
   });
   
 

@@ -36,22 +36,10 @@ class _RoomPageState extends State<RoomPage> {
                   roomName: widget.roomName);
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) =>
-              //         BlockConfig(blockName: widget.blockName),
-              //   ),
-              // );
-            },
-          ),
         ],
       ),
       body: Container(
-        color: const Color.fromARGB(255, 68, 127, 175),
+        color: const Color.fromARGB(255, 20, 94, 155),
         child: FutureBuilder(
           future:
               getElementsforRoom(widget.token, widget.blockID, widget.roomName),
@@ -73,6 +61,16 @@ class _RoomPageState extends State<RoomPage> {
             }
 
             List<Map<String, dynamic>> item = snapshot.data!;
+            item = item
+                .where((element) =>
+                    !element['elementName'].toLowerCase().contains('sensor'))
+                .toList();
+
+            if (item.isEmpty) {
+              return const Center(
+                child: Text('No non-sensor elements found.'),
+              );
+            }
 
             return ListView.builder(
               itemCount: item.length,
@@ -86,6 +84,24 @@ class _RoomPageState extends State<RoomPage> {
   }
 
   buildCard(BuildContext context, Obj element) {
+    IconData iconData;
+    Color? iconColor;
+
+    // Verificar o tipo do elemento e definir o ícone correspondente
+    if (element.elementType == 'Light') {
+      iconData = element.stats ? Icons.lightbulb : Icons.lightbulb_outline;
+      iconColor = element.stats ? Colors.yellow : Colors.grey;
+    } else if (element.elementType == 'Air-Conditioner') {
+      iconData = element.stats ? Icons.ac_unit : Icons.ac_unit_outlined;
+      iconColor = element.stats ? Colors.blue : Colors.grey;
+    } else {
+      // Adicione condições para outros tipos de elementos, se necessário
+      iconData = element.stats
+          ? Icons.power_settings_new
+          : Icons.power_settings_new_outlined;
+      iconColor = element.stats ? Colors.green : null;
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -108,57 +124,27 @@ class _RoomPageState extends State<RoomPage> {
             ),
             IconButton(
               icon: AnimatedContainer(
-                duration: const Duration(
-                    milliseconds:
-                        200), // Duração da animação (pode ajustar conforme necessário)
+                duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
-                  color: element.stats ? Colors.green.withOpacity(0.5) : null,
+                  color: element.stats
+                      ? const Color.fromARGB(110, 51, 180, 55).withOpacity(0.5)
+                      : null,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  element.stats
-                      ? Icons.power_settings_new
-                      : Icons.power_settings_new_outlined,
-                  color: element.stats ? Colors.green : null,
+                  iconData,
+                  color: iconColor,
                 ),
               ),
               onPressed: () async {
                 dialogBox(
-                    context,
-                    'Notification',
-                    await addRequest(
-                        widget.token,
-                        widget.blockID,
-                        element.elementName,
-                        '-1',
-                        element.pin,
-                        !element.stats));
+                  context,
+                  'Notification',
+                  await addRequest(widget.token, widget.blockID,
+                      element.elementName, '-1', element.pin, !element.stats),
+                );
               },
-              // } else {
-              //   // ignore: use_build_context_synchronously
-              //   showDialog(
-              //     context: context,
-              //     builder: (BuildContext context) {
-              //       return AlertDialog(
-              //         title: const Text('Request Denied'),
-              //         content: const Text(
-              //             'Already have a request in line for this element'),
-              //         actions: <Widget>[
-              //           TextButton(
-              //             onPressed: () {
-              //               Navigator.pop(context);
-              //             },
-              //             child: const Text('OK'),
-              //           ),
-              //         ],
-              //       );
-              //     },
-              //   );
-              // }
-              // },
-              tooltip: element.stats
-                  ? 'Turn Off'
-                  : 'Turn On', // Tooltip a ser exibida
+              tooltip: element.stats ? 'Turn Off' : 'Turn On',
             ),
           ],
         ),
@@ -167,10 +153,7 @@ class _RoomPageState extends State<RoomPage> {
   }
 }
 
-// Adicionar ao criar um elemento de dentro da pagina de sala, trave a criacao do elemento no bloco e sala
 
 //TODO make the card color, background color, and bar color like all another apps, pick like a requerid maybe
-
-//TODO fazer os testes restantes como o teste de encher uma sala de elementos a infinito pra ver o comportamento
 
 //TOO adicionar layout resposivel 

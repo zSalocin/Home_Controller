@@ -112,6 +112,37 @@ Widget blockCreateDialogBox(
       ]);
 }
 
+Widget roomCreateDialogBox(BuildContext context, String token, String blockname,
+    String tittle, String text) {
+  return AlertDialog(
+      title: Text(tittle),
+      content: Text(text),
+      actions: <Widget>[
+        Center(
+          child: Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  roomCreate(
+                    context: context,
+                    token: token,
+                    blockName: blockname,
+                  );
+                },
+                child: const Text('Create a room'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('close'),
+              ),
+            ],
+          ),
+        ),
+      ]);
+}
+
 Widget elementCreateDialogBox(BuildContext context, String token, String tittle,
     String text, String blockName, String roomName) {
   return AlertDialog(
@@ -277,7 +308,7 @@ Future<void> blockCreate(
 Future<void> roomCreate(
     {required BuildContext context,
     required String token,
-    String? blockName}) async {
+    required String? blockName}) async {
   final item = await getBlocks(token);
   final formKey = GlobalKey<FormState>();
   String selectedBlock = "";
@@ -354,7 +385,7 @@ List<String> itemStyle = [
 ];
 
 // //TODO make the itemStyle List import from backend or esp
-// //TODO Make the pins a dropdownButton
+// //TODO Make the pins a dropdownButton import a list of valid pins for backend
 
 Future<void> elementCreate(
     {required BuildContext context,

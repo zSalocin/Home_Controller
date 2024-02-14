@@ -69,7 +69,6 @@ Future<String> addBlock(String token, String blockName) async {
     if (response.statusCode == 200) {
       return 'Register new block successfully';
     } else {
-      print('Response body: ${response.body}');
       return 'Registration failed with status: ${response.statusCode}.';
     }
   } catch (error) {
@@ -85,12 +84,9 @@ Future<List<Map<String, dynamic>>> getBlocks(String token) async {
       'Authorization': 'Bearer $token',
     });
 
-    print(convert.jsonDecode(response.body));
-
     if (response.statusCode == 200) {
       List<dynamic> data = convert.json.decode(response.body);
       List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(data);
-      print(items);
       return items;
     } else {
       throw Exception('Failed to load data');
@@ -120,7 +116,6 @@ Future<String> addRooms(String token, String blockId, String roomName) async {
     if (response.statusCode == 200) {
       return 'Register new room successfully';
     } else {
-      print('Response body: ${response.body}');
       return 'Registration failed with status: ${response.statusCode}.';
     }
   } catch (error) {
@@ -136,13 +131,10 @@ Future<List<String>> getRooms(String token, String blockId) async {
       'Authorization': 'Bearer $token',
     });
 
-    print(convert.jsonDecode(response.body));
-
     if (response.statusCode == 200) {
       List<dynamic> data = convert.json.decode(response.body);
       List<String> roomNames =
           data.map((room) => room['roomName'] as String).toList();
-      print(roomNames);
       return roomNames;
     } else {
       throw Exception('Failed to load data');
@@ -189,7 +181,6 @@ Future<String> addElement(
     if (response.statusCode == 200) {
       return 'Register new element successfully';
     } else {
-      print('Response body: ${response.body}');
       return 'Registration failed with status: ${response.statusCode}.';
     }
   } catch (error) {
@@ -221,7 +212,6 @@ Future<String> addAttachtoElement({
     if (response.statusCode == 200) {
       return 'Register new attach successfully';
     } else {
-      print('Response body: ${response.body}');
       return 'Registration failed with status: ${response.statusCode}.';
     }
   } catch (error) {
@@ -238,12 +228,9 @@ Future<List<Map<String, dynamic>>> getElements(
       'Authorization': 'Bearer $token',
     });
 
-    print(convert.jsonDecode(response.body));
-
     if (response.statusCode == 200) {
       List<dynamic> data = convert.json.decode(response.body);
       List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(data);
-      print(items);
       return items;
     } else {
       throw Exception('Failed to load data');
@@ -263,14 +250,11 @@ Future<List<Map<String, dynamic>>> getElementsforRoom(
       'Authorization': 'Bearer $token',
     });
 
-    print(convert.jsonDecode(response.body));
-
     if (response.statusCode == 200) {
       List<dynamic>? data = convert.json.decode(response.body);
       if (data != null) {
         List<Map<String, dynamic>> items =
             List<Map<String, dynamic>>.from(data);
-        print(items);
         return items;
       } else {
         // Retorna uma lista vazia se não houver dados
@@ -309,7 +293,6 @@ Future<String> addRequest(String token, String blockId, String requestName,
     if (response.statusCode == 200) {
       return 'Register new request successfully';
     } else {
-      print('Response body: ${response.body}');
       return 'Registration failed with status: ${response.statusCode}.';
     }
   } catch (error) {
@@ -317,4 +300,47 @@ Future<String> addRequest(String token, String blockId, String requestName,
   }
 }
 
-// TODO return only elements if they are in a room
+// Future<List<String>> getRequest(String token, String blockId) async {
+//   try {
+//     var url = Uri.parse('${ApiURL.baseURL}/public/get/$blockId/requests');
+
+//     var response = await http.get(url, headers: {
+//       'Authorization': 'Bearer $token',
+//     });
+
+//     print(convert.jsonDecode(response.body));
+
+//     if (response.statusCode == 200) {
+//       List<dynamic> data = convert.json.decode(response.body);
+//       List<String> roomNames =
+//           data.map((room) => room['roomName'] as String).toList();
+//       print(roomNames);
+//       return roomNames;
+//     } else {
+//       throw Exception('Failed to load data');
+//     }
+//   } catch (error) {
+//     throw Exception('Error: $error');
+//   }
+// }
+
+Future<List<Map<String, dynamic>>> getRequest(
+    String token, String blockId) async {
+  try {
+    final url = Uri.parse('${ApiURL.baseURL}/public/get/$blockId/requests');
+
+    var response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = convert.json.decode(response.body);
+      List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(data);
+      return items;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  } catch (error) {
+    throw Exception('Error: $error');
+  }
+}

@@ -2,27 +2,7 @@ import { Request, Response } from 'express';
 import * as elementService from '../Services/element_services';
 import AuthenticatedRequest from '../Types/types';
 
-export async function addElement(req: AuthenticatedRequest, res: Response) {
-  const userId = req.user?.userId;
-  const blockId = req.params.blockId;
-  const newElementData = req.body;
-
-  if (!userId) {
-    return res.status(401).json({ error: 'User not authenticated' });
-  }
-
-  try {
-    if (!newElementData || Object.keys(newElementData).length === 0) {
-      return res.status(400).json({ error: 'Invalid element data' });
-    }
-
-    const newElement = await elementService.addElement(userId, blockId, newElementData);
-    res.json(newElement);
-  } catch (error) {
-    console.error('Error adding a new element:', error);
-    res.status(500).json({ error: 'Error adding a new element' });
-  }
-}
+// Get Methods
 
 export async function getElementsInRoom(req: AuthenticatedRequest, res: Response) {
   const userId = req.user?.userId;
@@ -54,6 +34,30 @@ export async function getAllElements(req: Request, res: Response) {
   }
 }
 
+// Set Methods
+
+export async function addElement(req: AuthenticatedRequest, res: Response) {
+  const userId = req.user?.userId;
+  const blockId = req.params.blockId;
+  const newElementData = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'User not authenticated' });
+  }
+
+  try {
+    if (!newElementData || Object.keys(newElementData).length === 0) {
+      return res.status(400).json({ error: 'Invalid element data' });
+    }
+
+    const newElement = await elementService.addElement(userId, blockId, newElementData);
+    res.json(newElement);
+  } catch (error) {
+    console.error('Error adding a new element:', error);
+    res.status(500).json({ error: 'Error adding a new element' });
+  }
+}
+
 export async function addAttachPinToElement(req: AuthenticatedRequest, res: Response) {
   const userId = req.user?.userId;
   const blockId = req.params.blockId;
@@ -76,3 +80,7 @@ export async function addAttachPinToElement(req: AuthenticatedRequest, res: Resp
     res.status(500).json({ error: 'Error adding attach pin to element' });
   }
 }
+
+// Update Methods
+
+// Delete Methods

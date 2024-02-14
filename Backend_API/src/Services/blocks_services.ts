@@ -3,6 +3,8 @@ import rootUser from '../Models/users';
 
 class BlockService {
 
+// Get Methods
+
   async getAllBlocks(userId: string): Promise<any[]> {
     try {
       const blocks = await Block.find({ userId }).select('userId name roomNumber elementNumber').lean();
@@ -12,6 +14,8 @@ class BlockService {
       throw new Error('Error fetching all blocks');
     }
   }
+
+// Set Methods
 
   async addBlock(userId: string, newBlockData: any) {
     try {
@@ -65,11 +69,14 @@ class BlockService {
       
       return block.elementNumber;
     } catch (error) {
-      console.error('Error adding room number:', error);
-      throw new Error('Error adding room number');
+      console.error('Error adding element number:', error);
+      throw new Error('Error adding element number');
     }
   }
+
+  // Update Methods
+
+  // Delete Methods
 } 
 
-//TODO check the addBlock method, dosent working
 export default new BlockService();
