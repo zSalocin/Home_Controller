@@ -46,35 +46,30 @@ class BlockConfigState extends State<BlockConfig> {
                           Expanded(
                             flex: 40,
                             child: SizedBox(
-                              width: double.infinity,
-                              height: double.infinity,
-                              child: Column(
-                                children: [
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  ElevatedButton(
+                                width: double.infinity,
+                                height: double.infinity,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    const SizedBox(height: 5),
+                                    ElevatedButton(
                                       onPressed: () {},
-                                      child: const Text("Create a new Room")),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  ElevatedButton(
+                                      child: const Text("Create a new Room"),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    ElevatedButton(
                                       onPressed: () {},
-                                      child:
-                                          const Text("Create a new Element")),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  ElevatedButton(
+                                      child: const Text("Create a new Element"),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    ElevatedButton(
                                       onPressed: () {},
-                                      child: const Text("Add a Request")),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                ],
-                              ),
-                            ),
+                                      child: const Text("Add a Request"),
+                                    ),
+                                    const SizedBox(height: 5),
+                                  ],
+                                )),
                           ),
                           Expanded(
                             flex: 60,
@@ -153,7 +148,12 @@ class BlockConfigState extends State<BlockConfig> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Block Name: ${widget.block.name} /n BlockId: ${widget.block.blockId}',
+                                        'Block Name: ${widget.block.name}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        'BlockId: ${widget.block.blockId}',
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -162,6 +162,7 @@ class BlockConfigState extends State<BlockConfig> {
                                           'Current Element Number: ${widget.block.elementNumber}'),
                                       Text(
                                           'Current Room Number: ${widget.block.roomNumber}'),
+                                      // TODO put this inforamtion in the card
                                       // Text(
                                       //     'Microcontroller Type: ${widget.block.}'),
                                       // Text(
@@ -278,7 +279,7 @@ class BlockConfigState extends State<BlockConfig> {
                                     selectedBlock: widget.block.blockId,
                                   );
                                 },
-                                child: const Text("Create a Button"),
+                                child: const Text("Create a element"),
                               ),
                             );
                           }
@@ -545,16 +546,21 @@ class BlockConfigState extends State<BlockConfig> {
             },
           ),
           Card(
-            margin: const EdgeInsets.all(0),
-            color: Colors.transparent,
-            child: TextButton(
-              onPressed: () {
-                elementAttach(context, widget.token, widget.block.blockId,
-                    element, actuators);
-              },
-              child: const Text("New Attach"),
-            ),
-          ),
+              margin: const EdgeInsets.all(4.0),
+              color: Colors.transparent,
+              child: TextButton(
+                onPressed: () {
+                  elementAttach(context, widget.token, widget.block.blockId,
+                      element, actuators);
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 155, 182, 178)), // Cor de fundo
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.all(16.0)), // Preenchimento
+                ),
+                child: const Text("New Attach"),
+              )),
         ],
       ),
     );
