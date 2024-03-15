@@ -19,6 +19,7 @@ export async function getElementsInRoom(userId: string, blockId: string, roomNam
     throw new Error('Error getting elements in room');
   }
 }
+
 export async function getAllElements(blockId: string) {
   try {
     const block = await Block.findById(blockId);
@@ -95,4 +96,52 @@ export async function addAttachPinToElement(userId: string, blockId: string, ele
 
 // Update Methods
 
+export async function updateElement(userId: string, blockId: string, elementId: string, updatedElementData: any) {
+  try {
+    const block = await Block.findOne({ _id: blockId, userId });
+
+    if (!block) {
+      throw new Error('Block not found for the user.');
+    }
+
+    const elementIndex = block.element.findIndex(element => block.element.id.toString() === elementId);
+
+    if (elementIndex === -1) {
+      throw new Error('Element not found in the block.');
+    }
+
+    Object.assign(block.element[elementIndex], updatedElementData);
+    await block.save();
+
+    return { message: 'Element updated successfully.' };
+  } catch (error) {
+    console.error('Error updating element:', error);
+    throw new Error('Error updating element');
+  }
+}
+
 // Delete Methods
+
+export async function deleteElement(userId: string, blockId: string, elementId: string) {
+  try {
+    const block = await Block.findOne({ _id: blockId, userId });
+
+    if (!block) {
+      throw new Error('Block not found for the user.');
+    }
+
+    const elementIndex = block.element.findIndex(element => block.element.id.toString() === elementId);
+
+    if (elementIndex === -1) {
+      throw new Error('Element not found in the block.');
+    }
+
+    block.element.splice(elementIndex, 1);
+    await block.save();
+
+    return { message: 'Element deleted successfully.' };
+  } catch (error) {
+    console.error('Error deleting element:', error);
+    throw new Error('Error deleting element');
+  }
+}

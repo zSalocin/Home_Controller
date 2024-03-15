@@ -17,7 +17,6 @@
 
 WiFiClient client; // Initialize the WiFi client
 
-
 void setup() {
   Serial.begin(115200);
   delay(10);
@@ -70,6 +69,7 @@ void processRequests(String payload) {
         int pin = obj["pin"].as<int>();
         bool stats = obj["stats"].as<bool>();
 
+        //digitalWrite(pin, stats);
         Serial.print("Action executed for request with name: ");
         Serial.println(name);
 
@@ -103,7 +103,7 @@ void handleRequests() {
   }
 }
 
-void processElement(String payload){
+void processElement(String payload) {
   DynamicJsonDocument doc(1024);
   DeserializationError error = deserializeJson(doc, payload);
 
@@ -112,6 +112,7 @@ void processElement(String payload){
       JsonArray jsonArray = doc.as<JsonArray>();
       for (JsonObject obj : jsonArray) {
         String name = obj["elementName"].as<String>();
+        String type = obj["elementType"].as<String>();
         int pin = obj["pin"].as<int>();
         JsonArray attachpinArray = obj["attachPins"].as<JsonArray>(); // Get attachpin as a JsonArray
 
@@ -121,8 +122,16 @@ void processElement(String payload){
           attachpin.push_back(value.as<int>());
         }
 
-        Serial.print("Action executed for sensor with name: ");
-        Serial.println(name);
+        if (type.indexOf("Sensor") != -1) {
+          //int sensorValue = digitalRead(pin);
+          
+          //for(int x = 0; x < attachpin.size(); x++) {
+          //  digitalWrite(attachpin[x], sensorValue);
+          //}
+
+          Serial.print("Action executed for sensor with name: ");
+          Serial.println(name);
+        }
       }
     } else {
       Serial.println("Invalid JSON format: not an array");
@@ -131,6 +140,7 @@ void processElement(String payload){
     Serial.println("Failed to parse JSON");
   }
 }
+
 void handleElement(){
   Serial.println("Checking for elements...");
   HTTPClient http; // Initialize the HTTP client for each request

@@ -83,4 +83,45 @@ export async function addAttachPinToElement(req: AuthenticatedRequest, res: Resp
 
 // Update Methods
 
+export async function updateElement(req: AuthenticatedRequest, res: Response) {
+  const userId = req.user?.userId;
+  const blockId = req.params.blockId;
+  const elementId = req.params.elementId;
+  const updatedElementData = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'User not authenticated' });
+  }
+
+  try {
+    if (!updatedElementData || Object.keys(updatedElementData).length === 0) {
+      return res.status(400).json({ error: 'Invalid updated element data' });
+    }
+
+    const result = await elementService.updateElement(userId, blockId, elementId, updatedElementData);
+    res.json(result);
+  } catch (error) {
+    console.error('Error updating element:', error);
+    res.status(500).json({ error: 'Error updating element' });
+  }
+}
+
 // Delete Methods
+
+export async function deleteElement(req: AuthenticatedRequest, res: Response) {
+  const userId = req.user?.userId;
+  const blockId = req.params.blockId;
+  const elementId = req.params.elementId;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'User not authenticated' });
+  }
+
+  try {
+    const result = await elementService.deleteElement(userId, blockId, elementId);
+    res.json(result);
+  } catch (error) {
+    console.error('Error deleting element:', error);
+    res.status(500).json({ error: 'Error deleting element' });
+  }
+}

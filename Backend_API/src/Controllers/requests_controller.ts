@@ -73,6 +73,25 @@ export async function deleteRequestByName(req: Request, res: Response) {
   }
 }
 
+export async function deleteRequestById(req: Request, res: Response) {
+  const blockId = req.params.blockId;
+  const requestId = req.params.requestId;
+
+  try {
+    if (!blockId || !requestId) {
+      throw new Error('Block ID or Request ID is missing in the request parameters.');
+    }
+
+    console.log('Deleting request with blockId:', blockId, 'and requestId:', requestId);
+    await requestService.deleteRequestById(blockId, requestId);
+    console.log('Request deleted successfully.');
+    res.status(204).end();
+  } catch (error) {
+    console.error('Error deleting request:', error);
+    res.status(500).json({ error: (error as Error).message || 'Internal Server Error' });
+  }
+}
+
 export async function deleteExecutedRequests(req: Request, res: Response) {
   const blockId = req.params.blockId;
 

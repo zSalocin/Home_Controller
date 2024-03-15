@@ -68,6 +68,40 @@ export async function addRequest(userId: string, blockId: string, newRequestdata
 
 // Delete Methods
 
+export async function deleteRequestById(blockId: string, requestId: string) {
+  try {
+    console.log('Attempting to delete request with blockId:', blockId, 'and requestId:', requestId);
+    
+    // Find the block by its ID
+    const block = await Block.findById(blockId);
+
+    if (!block) {
+      throw new Error('Block not found for the user.');
+    }
+
+    // Find the index of the request within the requests array
+    const requestIndex = block.requests.findIndex(request => request.id.toString() === requestId);
+
+    if (requestIndex === -1) {
+      throw new Error('Request not found in the block.'); // Corrected error message
+    }
+
+    // Remove the request from the requests array
+    block.requests.splice(requestIndex, 1);
+
+    // Save the updated block
+    await block.save();
+
+    console.log('Request deleted successfully.');
+    
+    // Return a success message
+    return { message: 'Request deleted successfully.' };
+  } catch (error) {
+    console.error('Error deleting request:', error);
+    throw new Error('Error deleting request');
+  }
+}
+
 export async function deleteRequestByName(blockId: string, requestName: string) {
   try {
     const block = await Block.findById(blockId);
